@@ -1,0 +1,4 @@
+config enable_query_strings = FALSE
+PHP.ini timezone = PRC;
+
+config:--project.php--
