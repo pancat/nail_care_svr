@@ -1,5 +1,5 @@
 /*
-* SQL file: exp_fanrong_file_information.sql
+* SQL file: exp_pancat_file_information.sql
 *           provide upload file informatiom table
 *           At first using,Admin must be execute it;
 * @author: JogRunner
