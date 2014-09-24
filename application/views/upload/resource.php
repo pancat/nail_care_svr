@@ -1,4 +1,4 @@
-
+<link href="assets/css/uploadify/showfile.css" rel="stylesheet" type="text/css" />
 <!-- 标题栏 -->
 <div class="body_header">
 	<div id="title">
@@ -33,7 +33,7 @@
  	 
  	 <!-- 二维码区域 -->
 	 <div class="twodimleft ">
-	  <img src="<?php echo site_url('pancat/upload/twodim/'.$record[Fileupload_model::FILE_ID]); ?>" />
+	  <img src="<?php echo site_url('Pancat/upload/twodim/'.$record[Fileupload_model::FILE_ID]); ?>" />
 	 </div> <!-- end twodimleft -->
 	 
 	 <!-- 文件信息显示 -->
@@ -51,3 +51,4 @@
 <!-- 版权信息 -->
 <div class="com">
 </div> <!--  end com -->
+

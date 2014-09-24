@@ -7,7 +7,7 @@
 * 
 */
 
-create table exp_pancat_file_information(
+create table fr_exp_pancat_file_information(
 file_id int not null primary key auto_increment, #�ļ�id
 file_name varchar(20) not null, #�ļ���
 file_download_addr varchar(64) not null, #�ļ����ص�ַ
@@ -22,7 +22,7 @@ file_enabled_delete boolean not null default false, #�ļ��ܷ�����
 file_share_authority boolean not null default false #�ļ��Ƿ�����
 );
 
-create index FileNameIndex on exp_pancat_file_information (file_name);
+create index FileNameIndex on fr_exp_pancat_file_information (file_name);
 
 #insert into exp_pancat_file_information values(NULL,'abc.apk','http://www.fanrong.com/abc.apk',23,now(),'http://www.fanrong.com/images/abc_id.png','apk','jogrunner',0,false,false,false);
 #insert into exp_pancat_file_information values(NULL,'cde.apk','http://www.fanrong.com/cde.apk',2,now(),'http://www.fanrong.com/images/cde_id1.png','apk','jogrunner',0,false,false,false);

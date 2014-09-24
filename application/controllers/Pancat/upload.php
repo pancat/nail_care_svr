@@ -15,7 +15,6 @@ class Upload extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
 		$this->load->model($this->storageModel);
-		
 		//from config/project.php load config['upload_site']
 		$this->config->load('project');
 		if($this->config->item('upload_site'))
@@ -26,19 +25,19 @@ class Upload extends CI_Controller{
 	
 	public function uploadfile(){
 		
-		$js = $this->config->item('base_url').'/'.APPPATH.'js/';
+		// $js = $this->config->item('base_url').'/js/';
 		
-		$this->load->helper('pancatarray');
-		$data['js'] = addprefix($js.'uploadify/',array('jquery.uploadify.js'));
-		$data['js'] = array_merge((array)($js.'common./jquery.js'),$data['js']);
-		$data['title'] = '上传文件';
-		$data['swf'] = $this->config->item('base_url').'/'.APPPATH.'res/video/uploadify.swf';
-		$this->load->helper('url');
-		$data['page'] = site_url('pancat/upload/handle');
+		// $this->load->helper('pancatarray');
+		// $data['js'] = addprefix($js.'uploadify/',array('jquery.uploadify.js'));
+		// $data['js'] = array_merge((array)($js.'common./jquery.js'),$data['js']);
+		$data_head['title'] = '上传文件';
+		// $data['swf'] = $this->config->item('base_url').'/assets/res/video/uploadify.swf';
+		
+		// $data['page'] = site_url('pancat/upload/handle');
 		$data['topage'] = site_url('pancat/upload/scan');
-		$data['css'] = addprefix($this->config->item('base_url').'/'.APPPATH.'css/uploadify/upload',array('.css','ify.css'));
+		// $data['css'] = addprefix($this->config->item('base_url').'/css/uploadify/upload',array('.css','ify.css'));
 		
-		$this->load->view('template/header',$data);
+		$this->load->view('template/header',$data_head);
 		$this->load->view('upload/uploadfile',$data);
 		$this->load->view('template/footer');
 		
@@ -47,18 +46,18 @@ class Upload extends CI_Controller{
 	}
 	public function handle()
 	{
-		$this->load->helper('url');
+		
 		$this->load->helper('date');
-		 if(!empty($_FILES))
+		if(!empty($_FILES))
 		{
 			$tempFile = $_FILES['Filedata']['tmp_name'];
-			$targetFile = $this->movepath.'apk/'.$_FILES['Filedata']['name'];
+			$targetFilePath = $this->movepath.'apk/'.$_FILES['Filedata']['name'];
 			$targeturl = $this->config->item('base_url').'/download/apk/'.$_FILES['Filedata']['name'];
-			if(file_exists($targetFile)){
+			if(file_exists($targetFilePath)){
 				echo '0'.'file already exits';
 				return ;
 			}
-			move_uploaded_file($tempFile,$targetFile);
+			move_uploaded_file($tempFile,$targetFilePath);
 			
 			//transfer database
 			date_default_timezone_set('PRC');
@@ -70,9 +69,10 @@ class Upload extends CI_Controller{
 			$data[Fileupload_model::FILE_TYPE] = 'apk';
 			
 			$this->fileupload_model->insert_fileinfo($data);
-			echo '1'.$targeturl;
-		} 
-		 echo '0';
+			echo '1'.$targetFilePath;
+			return ;
+		}
+		echo '0';
 	}
 	
 	public function _remap($method =""){
@@ -85,14 +85,14 @@ class Upload extends CI_Controller{
 	}
 	
 	public function scan(){
-		$this->load->helper('url');
-		$js = $this->config->item('base_url').'/'.APPPATH.'js/';
-		$css = $this->config->item('base_url').'/'.APPPATH.'css/';
+		
+		// $js = $this->config->item('base_url').'/assets/js/';
+		// $css = $this->config->item('base_url').'/assets/css/';
 		
 		$data['fileinfo'] = $this->fileupload_model->select_from_filename();
 		$data['title'] = '资源下载页面';
-		$data['js'] = array($js.'common/jquery.js');
-		$data['css'] = array($css.'uploadify/showfile.css');
+		// $data['js'] = array($js.'common/jquery.js');
+		// $data['css'] = array($css.'uploadify/showfile.css');
 		
 		$this->load->view('template/header',$data);
 		$this->load->view('upload/resource',$data);
@@ -104,7 +104,7 @@ class Upload extends CI_Controller{
 		$this->load->library('qrcodelib');
 		$url = $this->fileupload_model->geturl($id);
 		if($url)
-			echo QRcode::png($url,"",QR_ECLEVEL_Q);
+			echo QRcode::png($url,false,QR_ECLEVEL_Q);
 		else echo 'error';
 	}
 }

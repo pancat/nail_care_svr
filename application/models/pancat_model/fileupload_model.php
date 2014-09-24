@@ -10,7 +10,7 @@ class Fileupload_model extends CI_Model{
 	/*
 	 * column name
 	 */
-	const TABLE_NAME = "exp_pancat_file_information";
+	const TABLE_NAME = "fr_exp_pancat_file_information";
 	const FILE_ID = "file_id";
 	const FILE_NAME = "file_name";
 	const FILE_DOWNLOAD_ADDR = "file_download_addr";

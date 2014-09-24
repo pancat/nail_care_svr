@@ -1,0 +1,9 @@
+*.zip
+*.rar
+*.via
+*.tmp
+*.err
+*.apk
+/application/logs
+/config/database.php
+/config/config.php

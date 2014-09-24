@@ -1,10 +1,13 @@
+<script src="assets/js/uploadify/jquery.uploadify.min.js" type="text/javascript"></script>
+<link href="assets/css/uploadify/upload.css" rel="stylesheet" type="text/css" />
+<link href="assets/css/uploadify/uploadify.css" rel="stylesheet" type="text/css" />
 <!-- body start -->
 <script type="text/javascript">
 <!-- //-->
 $(document).ready(function(){
 	$('#file_upload').uploadify({
-		'swf'	: '<?php echo $swf ?>',
-		'uploader' : '<?php echo $page ?>',
+		'swf'	: "<?php echo base_url();?>assets/res/video/uploadify.swf",
+		'uploader' : "<?php echo site_url('pancat/upload/handle') ?>",
 		'auto'	: true,
 		'buttonText' : '上传文件',
 		'fileSizeLimit' : '100MB',
@@ -30,11 +33,15 @@ $(document).ready(function(){
 		   var t = "" + d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()+'  '+d.getHours()+":"+d.getMinutes(); 
 		   var id = isNaN(parseInt($e.text()))?1:(parseInt($e.text())+1);
 		   var v = "";
-		   var filesize = file.size /1024;
-		   if(filesize < 1) v = v + file.size + 'B';
-		   else if(filesize > 1024 ) v = v + (int)(filesize/1024) +"MB";
-		   else v = v+filesize+"KB";
-
+		   var divide = 1024;
+		   filesize = file.size;
+		   if((filesize = filesize/divide)<0.0) 
+		   		v = filesize*divide + 'B';
+		   else if ((filesize = filesize/divide)<0.0) 
+		   		v = filesize*divide + 'KB';
+		   else 
+		   		v = filesize + 'MB';
+		      
 		   var count = parseInt($('#file_count').text())+1;
 		   $('#file_count').text(count);
 		   
