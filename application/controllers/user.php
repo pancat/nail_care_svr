@@ -87,10 +87,12 @@ class User extends CI_Controller {
 				$this->interface_fields['res_state'] => 0,
 				$this->interface_fields['error_code'] => '000'
 				);
+		// form validation
 		$this->_init_login_validate();
 		if($this->form_validation->run() == FALSE) {
 			$res[$this->interface_fields['error_code']] = '101';
-		} else {
+		} 
+		else {
 			$arr = array(
 				$this->db_fields['user_name'] => 
 								$this->input->post($this->interface_fields['user_name'],'0'),
@@ -120,7 +122,7 @@ class User extends CI_Controller {
 			}
 		}
 		echo json_encode($res);
-		echo $this->session->userdata($this->session_fields['logged_in']);
+		echo '<p> logged_in: '.$this->session->userdata($this->session_fields['logged_in']);
 	}
 
 	/**

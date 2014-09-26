@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/nail_care_svr';
+$config['base_url']	= 'http://localhost/fanrong/';
 
 /*
 |--------------------------------------------------------------------------

@@ -42,7 +42,7 @@ class Test extends CI_Controller {
             );
 		$data['form_input'] = form_input($arr1);
 		$data['form_psd'] = form_password($arr2);
-		$data['form_submit'] = form_submit('submit','submit')
+		$data['form_submit'] = form_submit('submit','submit');
 		$this->load->view('test',$data);
 	}
 
@@ -123,5 +123,5 @@ class Test extends CI_Controller {
 
 }
 
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
+/* End of file test.php */
+/* Location: ./application/controllers/test.php */
