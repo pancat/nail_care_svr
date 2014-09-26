@@ -4,8 +4,11 @@
 <title>Test For Model</title>
 </head>
 <body>
-<?php foreach ($res as $item):?>
-<p>	<?php echo $item[Fileupload_model::FILE_DOWNLOAD_ADDR];?></p><br />
-<?php endforeach;?>
+<?php
+	echo $form;
+	echo $form_input;
+	echo $form_psd;
+	echo $form_submit; 
+?>
 </body>
 </html>
