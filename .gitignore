@@ -5,5 +5,5 @@
 *.err
 *.apk
 /application/logs
-/config/database.php
-/config/config.php
+application/config/database.php
+application/config/config.php
