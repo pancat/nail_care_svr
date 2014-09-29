@@ -135,7 +135,7 @@ class User extends CI_Controller {
 		}
 		echo json_encode($res);
 		//for test
-		echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
+		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
 	}
 
 	/**
@@ -243,7 +243,7 @@ class User extends CI_Controller {
 			}
 		}
 		echo json_encode($res);
-		echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
+		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
 	}
 
 	/**
