@@ -16,18 +16,19 @@ class Test extends CI_Controller {
 		parent::__construct();
 		$this->load->library('session');
 		$this->load->model('user_model','user');
+		$this->load->helper('form');
 		$this->db_fields = $this->user->get_fields();
 	}
 
-	public function index()
+	public function login()
 	{
-		$this->load->helper('form');
+		
 
-		$data['form'] = form_open('user/login');
+		$data['form_login'] = form_open('user/login');
+		$data['form_register'] = form_open('user/register');
 		$arr1 = array(
               'name'        => 'username',
               'id'          => 'username',
-              'value'       => 'johndoe',
               'maxlength'   => '100',
               'size'        => '50',
               'style'       => 'width:50%',
@@ -35,7 +36,6 @@ class Test extends CI_Controller {
 		$arr2 = array(
               'name'        => 'password',
               'id'          => 'password',
-              'value'       => 'johndoe',
               'maxlength'   => '100',
               'size'        => '50',
               'style'       => 'width:50%',
@@ -43,7 +43,46 @@ class Test extends CI_Controller {
 		$data['form_input'] = form_input($arr1);
 		$data['form_psd'] = form_password($arr2);
 		$data['form_submit'] = form_submit('submit','submit');
-		$this->load->view('test',$data);
+		$this->load->view('test/login',$data);
+	}
+
+	public function register()
+	{
+		
+		$data['form_register'] = form_open('user/register');
+		$arr1 = array(
+              'name'        => 'username',
+              'id'          => 'username',
+              'maxlength'   => '100',
+              'size'        => '50',
+              'style'       => 'width:50%',
+            );
+		$arr2 = array(
+              'name'        => 'password',
+              'id'          => 'password',
+              'maxlength'   => '100',
+              'size'        => '50',
+              'style'       => 'width:50%',
+            );
+		$data['form_input'] = form_input($arr1);
+		$data['form_psd'] = form_password($arr2);
+		$data['form_submit'] = form_submit('submit','submit');
+		$this->load->view('test/register',$data);
+	}
+
+	public function user_info()
+	{
+		$data['form_info'] = form_open('user/get_user_info');
+		$arr1 = array(
+              'name'        => 'id',
+              'id'          => 'id',
+              'maxlength'   => '100',
+              'size'        => '50',
+              'style'       => 'width:50%',
+            );
+		$data['form_input'] = form_input($arr1);
+		$data['form_submit'] = form_submit('submit','submit');
+		$this->load->view('test/userinfo',$data);
 	}
 
 	/**

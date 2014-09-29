@@ -59,14 +59,16 @@ class User extends CI_Controller {
 								'user_id'	=>	'id',
 								'user_name' =>	'name',
 								'level'		=>	'level',
-								'logged_in' =>	'is_logged'
+								'logged_in' =>	'is_logged',
+								'log_time' =>	'log_time'
 							);
 
 	function __construct() {
 		parent::__construct();
 		$this->load->library('session');
-		$this->load->model('user_model','user');
-		$this->db_fields = $this->user->get_fields();
+		$this->load->model('user_model');
+		$this->load->helper('date');
+		$this->db_fields = $this->user_model->get_fields();
 	}
 
 	public function index()
@@ -76,13 +78,89 @@ class User extends CI_Controller {
 
 	/**
 	 * Login
-	 * @author fanz 2513273451@qq.com
-	 * @param POST username, password
+	 * @author fanz <2513273451@qq.com>
+	 * @param POST string username, string password
 	 * @return NULL 
-	 * @todo 
+	 * @access public
+	 * @todo delete test code
 	 */
 	public function login()
 	{	
+		$res = array(
+				$this->interface_fields['res_state'] => 0,
+				$this->interface_fields['error_code'] => '000',
+				'token'	=>''
+				);
+
+		// form validation
+		$this->_init_login_validate();
+		if($this->form_validation->run() == FALSE) {
+			$res[$this->interface_fields['error_code']] = '101';
+		} 
+		else {
+			$arr = array(
+				$this->db_fields['user_name'] => 
+								$this->input->post($this->interface_fields['user_name'],'0'),
+				$this->db_fields['psd'] =>
+								$this->input->post($this->interface_fields['psd'],'0'),
+			);
+			$data = $this->user_model->get_user_by_np($arr);
+			
+			if($data != FALSE) {
+				// set session
+				$data = $this->_gen_user_info($data);
+				$log_time = now();
+				$logtime = date('Y-m-d H:i:s',$log_time);
+	 			$lastip = $this->input->ip_address();
+	 			$session_data = array(
+	 					$this->session_fields['user_id'] => $data[$this->interface_fields['user_id']],
+	 					$this->session_fields['user_name'] => $data[$this->interface_fields['user_name']],
+	 					$this->session_fields['logged_in'] => TRUE,
+	 					$this->session_fields['log_time'] => $log_time,
+	 					$this->session_fields['level'] => $data[$this->interface_fields['level']]
+						);
+	 			$this->session->set_userdata($session_data);
+
+				$res[$this->interface_fields['res_state']] = 1;
+				$res[$this->interface_fields['error_code']] = '100';
+				// set token
+				$res['token'] = md5($data[$this->interface_fields['user_name']].
+									$data[$this->interface_fields['level']].$log_time)
+								.rand(10, 99);
+				$res = array_merge($res,$data);
+			}
+			else {
+				$res[$this->interface_fields['error_code']] = '102';
+			}
+		}
+		echo json_encode($res);
+		//for test
+		echo "\n".$res['avatar_uri'];
+		echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
+		echo '<p> logged_in: '.$this->session->userdata($this->session_fields['logged_in']);
+	}
+
+	/**
+	 * 登录表单验证规则的初始化
+	 * @author fanz <2513273451@qq.com>
+	 * @todo 修改用户名规则
+	 */
+	private function _init_login_validate() {
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules($this->interface_fields['user_name'], '用户名', 'trim|required|is_natural|min_length[1]|xss_clean');
+		$this->form_validation->set_rules($this->interface_fields['psd'], '密码', 'trim|required');
+	}
+
+	/**
+	 * Register
+	 * @author fanz <2513273451@qq.com>
+	 * @param POST string username, string password
+	 * @return NULL 
+	 * @access public
+	 * @todo 
+	 */
+	function register() {
 		$res = array(
 				$this->interface_fields['res_state'] => 0,
 				$this->interface_fields['error_code'] => '000'
@@ -98,47 +176,86 @@ class User extends CI_Controller {
 								$this->input->post($this->interface_fields['user_name'],'0'),
 				$this->db_fields['psd'] =>
 								$this->input->post($this->interface_fields['psd'],'0'),
+				$this->db_fields['avatar_uri'] =>
+								base_url().'assets/res/images/avatar.jpg',
+				$this->db_fields['register_date'] => now()
 			);
-			$data = $this->user->get_user($arr);
-			
-			if($data != FALSE) {
-				// set session
-				$data = $this->_gen_user_info($data);
-				$logtime = date('Y-m-d H:i:s',time());
-	 			$lastip = $this->input->ip_address();
-	 			$data = array(
-	 					$this->session_fields['user_id'] => $data[$this->interface_fields['user_id']],
-	 					$this->session_fields['user_name'] => $data[$this->interface_fields['user_name']],
-	 					$this->session_fields['logged_in'] => TRUE,
-	 					$this->session_fields['level'] => $data[$this->interface_fields['level']]
-						);
-	 			$this->session->set_userdata($data);
-				$res[$this->interface_fields['res_state']] = 1;
-				$res[$this->interface_fields['error_code']] = '100';
-				$res = array_merge($res,$data);
-			}
-			else {
+			// validate username 
+			if($this->user_model->get_user_by_uname(array_slice($arr, 0, 1)) != FALSE) {
 				$res[$this->interface_fields['error_code']] = '102';
+			} 
+			else {
+				$insert_res = $this->user_model->insert_entry($arr);
+				// validate insert result
+				if($insert_res == TRUE)
+				{
+					$user = $this->user_model->get_user_by_uname(array_slice($arr, 0, 1));
+					if($user == true) {
+						$res = array_merge($res, $this->_gen_user_info($user));
+						$res[$this->interface_fields['res_state']] = 1;
+						$res[$this->interface_fields['error_code']] = '100';
+					}
+					else {
+						$res[$this->interface_fields['error_code']] = '103';
+					}
+
+				}
+				
 			}
 		}
 		echo json_encode($res);
-		echo '<p> logged_in: '.$this->session->userdata($this->session_fields['logged_in']);
 	}
 
+
 	/**
-	 * 登录表单验证规则的初始化
-	 * @todo delete md5()
+	 * Get user information
+	 * @author fanz <2513273451@qq.com>
+	 * @param POST int id
+	 * @return NULL 
+	 * @access public
+	 * @todo 
 	 */
-	function _init_login_validate() {
-		$this->load->helper('form');
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules($this->interface_fields['user_name'], '用户名', 'trim|required|is_natural|exact_length[11]|xss_clean');
-		$this->form_validation->set_rules($this->interface_fields['psd'], '密码', 'trim|required|md5');
+	function get_user_info()
+	{
+		$res = array(
+				$this->interface_fields['res_state'] => 0,
+				$this->interface_fields['error_code'] => '000'
+				);
+		$token = $this->input->post('token', 0);
+		$uid = $this->input->post($this->interface_fields['user_id'], 0);
+		if($this->_token_validation($token) != TRUE) {
+			$res[$this->interface_fields['error_code']] = '101';
+		}
+		else if($uid == 0) {
+			$res[$this->interface_fields['error_code']] = '102';
+		} 
+		else {
+			$arr = array(
+					$this->db_fields['user_id'] => 
+									$this->input->post($this->interface_fields['user_id'], 0)
+					);
+			$data = $this->user_model->get_user_by_id($arr);
+			if($data != FALSE) {
+				$data = $this->_gen_user_info($data);
+				$res[$this->interface_fields['res_state']] = 1;
+				$res[$this->interface_fields['error_code']] = '100';
+				$res = array_merge($res, $data);
+			} else {
+				$res[$this->interface_fields['error_code']] = '103';
+			}
+		}
+		echo json_encode($res);
+		echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
 	}
 
 	/**
 	 * 将从数据库中取得的一个用户的信息进行编码
 	 * $data中的字段名称与数据库有关
+	 * @author fanz <2513273451@qq.com>
+	 * @param array
+	 * @return array 
+	 * @access private
+	 * @todo
 	 */
 	private function _gen_user_info($data)
 	{
@@ -146,10 +263,13 @@ class User extends CI_Controller {
 			$this->interface_fields['user_id']			=> 	$data[$this->db_fields['user_id']],
 			$this->interface_fields['user_name']		=>	$data[$this->db_fields['user_name']],
 			$this->interface_fields['nick_name']		=>	$data[$this->db_fields['nick_name']],
-			$this->interface_fields['psd'] 				=>	$data[$this->db_fields['psd']],
+			// $this->interface_fields['psd'] 				=>	$data[$this->db_fields['psd']],
 			$this->interface_fields['age']				=>	$data[$this->db_fields['age']],
+			$this->interface_fields['status']			=>	$data[$this->db_fields['status']],
 			$this->interface_fields['email']			=>	$data[$this->db_fields['email']],
-			$this->interface_fields['level']			=>	$data[$this->db_fields['level']]
+			$this->interface_fields['level']			=>	$data[$this->db_fields['level']],
+			$this->interface_fields['avatar_uri']		=>	$data[$this->db_fields['avatar_uri']],
+			$this->interface_fields['address']			=>	$data[$this->db_fields['address']]
 		);
 
 		return $arr;
@@ -158,6 +278,11 @@ class User extends CI_Controller {
 	/**
 	 * 将从数据库中取得的多个用户的信息进行编码
 	 * $data中的字段名称与数据库有关
+	 * @author fanz <2513273451@qq.com>
+	 * @param array
+	 * @return array 
+	 * @access private
+	 * @todo
 	 */
 	private function _gen_users_info($datas)
 	{
@@ -168,6 +293,21 @@ class User extends CI_Controller {
 			$arrs = array_merge($arrs, $arr1);
 		}
 		return $arrs;
+	}
+
+	/**
+	 * 将从数据库中取得的多个用户的信息进行编码
+	 * $data中的字段名称与数据库有关
+	 * @author fanz <2513273451@qq.com>
+	 * @param string $token
+	 * @return boolean 
+	 * 				true 	token验证合法
+	 *				false 	token验证不合法
+	 * @todo
+	 * @access private
+	 */
+	private function _token_validation($token) {
+		return TRUE;
 	}
 }
 
