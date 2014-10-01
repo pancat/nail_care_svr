@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2014 年 09 月 29 日 12:22
+-- 生成日期: 2014 年 10 月 01 日 18:28
 -- 服务器版本: 5.1.33
 -- PHP 版本: 5.2.9-2
 
@@ -12,6 +12,26 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 -- 数据库: `fanrong`
 --
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `fr_banner_image`
+--
+
+CREATE TABLE IF NOT EXISTS `fr_banner_image` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uri` varchar(50) NOT NULL,
+  `cre_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `order` int(11) NOT NULL DEFAULT '1',
+  `link` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- 导出表中的数据 `fr_banner_image`
+--
+
 
 -- --------------------------------------------------------
 
@@ -65,7 +85,9 @@ CREATE TABLE IF NOT EXISTS `fr_circle_comment` (
   `uid` int(11) NOT NULL,
   `comments` varchar(50) NOT NULL,
   `cre_date` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `cid` (`cid`),
+  KEY `uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
@@ -128,12 +150,19 @@ CREATE TABLE IF NOT EXISTS `fr_label` (
   `name` char(8) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 --
 -- 导出表中的数据 `fr_label`
 --
 
+INSERT INTO `fr_label` (`id`, `name`) VALUES
+(2, '光疗系列'),
+(5, '彩绘系列'),
+(3, '水晶系列'),
+(1, '甲油系列'),
+(6, '美甲专用笔'),
+(4, '饰品系列');
 
 -- --------------------------------------------------------
 
@@ -143,19 +172,25 @@ CREATE TABLE IF NOT EXISTS `fr_label` (
 
 CREATE TABLE IF NOT EXISTS `fr_product` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` char(10) NOT NULL,
+  `name` char(20) NOT NULL,
   `mid` int(11) NOT NULL COMMENT '美甲师 ID',
-  `discribe` varchar(50) DEFAULT NULL,
+  `discribe` varchar(100) DEFAULT NULL,
   `cre_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hit` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `m_id` (`mid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 --
 -- 导出表中的数据 `fr_product`
 --
 
+INSERT INTO `fr_product` (`id`, `name`, `mid`, `discribe`, `cre_date`, `hit`) VALUES
+(1, '都市甜心SweetC', 9, '都市甜心SweetCity 美甲产品 环保指甲油 美甲套装 魅影精致OL', '2014-10-01 13:37:30', 0),
+(2, 'candymoyo', 9, 'candymoyo 膜玉糖果色丝绒指甲油毛绒甲天鹅绒毛甲美甲产品彩妆工具13色', '2014-10-01 13:37:30', 0),
+(3, '都市甜心SweetC', 9, '都市甜心SweetCity 美甲产品 环保焕彩指甲油 14ml 白羊红MDS19', '2014-10-01 13:37:30', 0),
+(4, '都市甜心SweetC', 10, '都市甜心SweetCity 美甲产品 环保焕彩指甲油 14ml 白羊红MDS19', '2014-10-01 13:37:30', 0),
+(5, '都市甜心SweetC', 10, '都市甜心SweetCity 美甲产品 环保焕彩指甲油 14ml 白羊红MDS19', '2014-10-01 13:37:30', 0);
 
 -- --------------------------------------------------------
 
@@ -170,13 +205,23 @@ CREATE TABLE IF NOT EXISTS `fr_product_image` (
   `width` smallint(6) DEFAULT NULL,
   `pid` int(11) NOT NULL COMMENT '产品id',
   `order` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  PRIMARY KEY (`id`),
+  KEY `pid_2` (`pid`),
+  KEY `id` (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11 ;
 
 --
 -- 导出表中的数据 `fr_product_image`
 --
 
+INSERT INTO `fr_product_image` (`id`, `uri`, `height`, `width`, `pid`, `order`) VALUES
+(1, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', 10, 10, 3, 0),
+(2, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', 10, 10, 1, 0),
+(6, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 3, NULL),
+(7, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 3, NULL),
+(8, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 3, NULL),
+(9, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 3, NULL),
+(10, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 3, NULL);
 
 -- --------------------------------------------------------
 
@@ -188,7 +233,9 @@ CREATE TABLE IF NOT EXISTS `fr_product_label` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `pid` int(11) NOT NULL,
   `lid` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `pid` (`pid`),
+  KEY `lid` (`lid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
@@ -208,7 +255,8 @@ CREATE TABLE IF NOT EXISTS `fr_session` (
   `cre_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sessionid` char(40) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `sessionid` (`sessionid`)
+  UNIQUE KEY `sessionid` (`sessionid`),
+  KEY `uid` (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
@@ -241,7 +289,7 @@ CREATE TABLE IF NOT EXISTS `fr_user` (
   `remark` varchar(40) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_name` (`user_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户表' AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户表' AUTO_INCREMENT=11 ;
 
 --
 -- 导出表中的数据 `fr_user`
@@ -252,4 +300,38 @@ INSERT INTO `fr_user` (`id`, `user_name`, `nick_name`, `password`, `gender`, `ag
 (3, '18011900850', '123', '202cb962ac59075b964b07152d234b70', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '2014-09-29 12:14:31', '2014-09-29 12:14:31', NULL, 1, 1, 1, NULL),
 (4, '123', '23', '123', 1, 0, '123@qq.dom', '234', 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '2014-09-29 12:14:36', '2014-09-29 12:14:36', NULL, 1, 1, 1, '76'),
 (5, '1231', '', '123', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/a', '2014-09-29 12:11:52', '2014-09-29 10:49:34', NULL, 1, 1, 1, NULL),
-(6, '12321', '', '123', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '2014-09-29 12:14:42', '2014-09-29 12:14:42', NULL, 1, 1, 1, NULL);
+(6, '12321', '', '123', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '2014-09-29 12:14:42', '2014-09-29 12:14:42', NULL, 1, 1, 1, NULL),
+(7, '111', '', '111', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
+(8, '999', '', '999', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
+(9, '1234', '1234', '1234', 1, 0, '', NULL, NULL, '2014-10-01 13:33:24', '2014-10-01 13:33:24', NULL, 2, 1, 1, NULL),
+(10, '4321', '4321', '4321', 1, 0, '', NULL, NULL, '2014-10-01 13:34:08', '2014-10-01 13:34:08', NULL, 2, 1, 1, NULL);
+
+--
+-- 限制导出的表
+--
+
+--
+-- 限制表 `fr_cicle_image`
+--
+ALTER TABLE `fr_cicle_image`
+  ADD CONSTRAINT `fr_cicle_image_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `fr_circle` (`id`);
+
+--
+-- 限制表 `fr_circle_comment`
+--
+ALTER TABLE `fr_circle_comment`
+  ADD CONSTRAINT `fr_circle_comment_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `fr_user` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fr_circle_comment_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `fr_circle` (`id`) ON DELETE CASCADE;
+
+--
+-- 限制表 `fr_product_image`
+--
+ALTER TABLE `fr_product_image`
+  ADD CONSTRAINT `fr_product_image_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `fr_product` (`id`);
+
+--
+-- 限制表 `fr_product_label`
+--
+ALTER TABLE `fr_product_label`
+  ADD CONSTRAINT `fr_product_label_ibfk_2` FOREIGN KEY (`lid`) REFERENCES `fr_label` (`id`),
+  ADD CONSTRAINT `fr_product_label_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `fr_product` (`id`);
