@@ -294,8 +294,7 @@ class User extends CI_Controller {
 	}
 
 	/**
-	 * 将从数据库中取得的多个用户的信息进行编码
-	 * $data中的字段名称与数据库有关
+	 * 验证token
 	 * @author fanz <2513273451@qq.com>
 	 * @param string $token
 	 * @return boolean 
