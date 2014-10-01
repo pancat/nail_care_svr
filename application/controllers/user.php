@@ -243,6 +243,7 @@ class User extends CI_Controller {
 			}
 		}
 		echo json_encode($res);
+		// test
 		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
 	}
 
