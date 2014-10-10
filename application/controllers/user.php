@@ -133,6 +133,7 @@ class User extends CI_Controller {
 				$res[$this->interface_fields['error_code']] = '102';
 			}
 		}
+		header($this->config->item("header_json_utf8")); 
 		echo json_encode($res);
 		//for test
 		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
@@ -205,6 +206,7 @@ class User extends CI_Controller {
 				}
 			}
 		}
+		header($this->config->item("header_json_utf8")); 
 		echo json_encode($res);
 	}
 
@@ -246,6 +248,7 @@ class User extends CI_Controller {
 				$res[$this->interface_fields['error_code']] = '103';
 			}
 		}
+		header($this->config->item("header_json_utf8")); 
 		echo json_encode($res);
 		// test
 		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';

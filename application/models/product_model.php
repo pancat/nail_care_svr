@@ -2,7 +2,7 @@
 	
  /**
  * Product Model
- * A class provided some methods to CURD data in talbe fr_user
+ * A class provided some methods to CURD data in talbe fr_product
  * Created on 2014/10/01
  * @author fanz <2513273451@qq.com> 
  * @version 0.1
@@ -32,16 +32,17 @@
  						'product_id'		=> 'id'	,			//int 主键 产品id
  						'product_name'		=> 'name',			//string 产品名称
  						'product_discribe'	=> 'discribe',		//string 描述
- 						'cre_date'			=> 'cre_date',		//string 创建时间
- 						'hit'				=> 'hit',			//int
- 						'mid'				=> 'mid', 			//int 外键 美甲师id
+ 						'product_cre_date'	=> 'cre_date',		//string 创建时间
+ 						'product_hit'		=> 'hit',			//int
+ 						'product_mid'		=> 'mid', 			//int 外键 美甲师id
  						// 表 $user_table
  						'm_id'				=> 'id',			//int 美甲师id 
  						'm_name'			=> 'nick_name',		//string 美甲师名称
- 						'type'				=> 'type',
+ 						'm_status'			=> 'status',
+ 						'm_type'			=> 'type',
  						// 表 $image_table
  						'image_uri'			=> 'uri',			//string 产品图片地址
- 						'pid'				=> 'pid',			//int 外键 产品id 
+ 						'image_pid'			=> 'pid',			//int 外键 产品id 
  						'image_order'		=> 'order'			//int  照片排序 
  						);
 
@@ -80,21 +81,23 @@
  		$select = $this->table_name.'.'.$this->fields['product_id'].' as '.$this->config->item('product_id').', '.
  					$this->table_name.'.'.$this->fields['product_name'].' as '.$this->config->item('product_name').', '.
  					$this->table_name.'.'.$this->fields['product_discribe'].' as '.$this->config->item('product_discribe').', '.
- 					$this->table_name.'.'.$this->fields['cre_date'].' as '.$this->config->item('cre_date').', '.
- 					$this->table_name.'.'.$this->fields['hit'].' as '.$this->config->item('hit').', '.
- 					$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('image_uri').', '.
+ 					$this->table_name.'.'.$this->fields['product_cre_date'].' as '.$this->config->item('product_cre_date').', '.
+ 					$this->table_name.'.'.$this->fields['product_hit'].' as '.$this->config->item('product_hit').', '.
+ 					$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('product_image').', '.
  					$this->user_table.'.'.$this->fields['m_name'].' as '.$this->config->item('m_name')
  					;
  		// 'product.id as id, product.name as name, image.uri as image_uri'
  		$this->db->select($select);
  		$this->db->from($this->table_name);
  		$this->db->join($this->image_table, 
- 				$this->image_table.'.'.$this->fields['pid'].' = '.$this->table_name.'.'.$this->fields['product_id']
+ 				$this->image_table.'.'.$this->fields['image_pid'].' = '.$this->table_name.'.'.$this->fields['product_id']
  				.' and '.$this->image_table.'.'.$this->fields['image_order'].' = 0 ', 'left'
  				);
  		$this->db->join($this->user_table, 
- 				$this->table_name.'.'.$this->fields['mid'].' = '.$this->user_table.'.'.$this->fields['m_id']
- 				.' and '.$this->user_table.'.'.$this->fields['type'].' = 2 ', 'left'
+ 				$this->table_name.'.'.$this->fields['product_mid'].' = '.$this->user_table.'.'.$this->fields['m_id']
+ 				.' and '.$this->user_table.'.'.$this->fields['m_type'].' = 2 '
+ 				.' and '.$this->user_table.'.'.$this->fields['m_status'].' = 1 '
+ 				, 'left'
  				);
  		$this->db->limit($limit,$offset);
  		if($order_by != "" && $this->db->field_exists($order_by, $this->table_name))
@@ -125,16 +128,16 @@
  		$select = $this->table_name.'.'.$this->fields['product_id'].' as '.$this->config->item('product_id').', '.
  					$this->table_name.'.'.$this->fields['product_name'].' as '.$this->config->item('product_name').', '.
  					$this->table_name.'.'.$this->fields['product_discribe'].' as '.$this->config->item('product_discribe').', '.
- 					$this->table_name.'.'.$this->fields['cre_date'].' as '.$this->config->item('cre_date').', '.
- 					$this->table_name.'.'.$this->fields['hit'].' as '.$this->config->item('hit').', '.
+ 					$this->table_name.'.'.$this->fields['product_cre_date'].' as '.$this->config->item('product_cre_date').', '.
+ 					$this->table_name.'.'.$this->fields['product_hit'].' as '.$this->config->item('product_hit').', '.
  					$this->user_table.'.'.$this->fields['m_name'].' as '.$this->config->item('m_name')
  					;
  		$this->db->select($select);
  		$this->db->from($this->table_name);
  		$this->db->where($this->table_name.'.'.$this->fields['product_id'].' = '.$product_id);
  		$this->db->join($this->user_table, 
- 				$this->table_name.'.'.$this->fields['mid'].' = '.$this->user_table.'.'.$this->fields['m_id']
- 				.' and '.$this->user_table.'.'.$this->fields['type'].' = 2 ', 'left'
+ 				$this->table_name.'.'.$this->fields['product_mid'].' = '.$this->user_table.'.'.$this->fields['m_id']
+ 				.' and '.$this->user_table.'.'.$this->fields['m_type'].' = 2 ', 'left'
  				);
  		$res = $this->db->get();
  		if($res->num_rows() >= 1)
@@ -155,10 +158,10 @@
  	function get_product_images($product_id = 0)
  	{
  		$select = 
- 			$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('image_uri');
+ 			$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('product_image');
  		$this->db->select($select);
  		$this->db->from($this->image_table);
- 		$this->db->where($this->image_table.'.'.$this->fields['pid'].' = '.$product_id);
+ 		$this->db->where($this->image_table.'.'.$this->fields['image_pid'].' = '.$product_id);
  		$res = $this->db->get();
  		if($res->num_rows() >= 1)
  			return $res->result_array();

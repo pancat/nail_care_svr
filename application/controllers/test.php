@@ -20,6 +20,16 @@ class Test extends CI_Controller {
 		$this->db_fields = $this->user->get_fields();
 	}
 
+
+	public function get_circle_list()
+	{
+		$this->load->model('circle_model', 'circle');
+		$res = $this->circle->get_circle_list();
+
+		header($this->config->item("header_json_utf8")); 	
+		echo json_encode($res);
+	}
+
 	public function login()
 	{
 		

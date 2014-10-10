@@ -23,21 +23,6 @@ class Product extends CI_Controller {
 	 */
 	protected $db_fields;
 
-	/**
-	 * 外部接口字段名($value是外部接口的字段名称)
-	 * @dis
-	 */
-	// protected  $interface_fields = array(
- // 						'product_id'		=> 'product_id'	,	//int 主键 id
- // 						'product_name'		=> 'name',			//string 产品名称
- // 						'm_id'				=> 'm_id',			//int 美甲师id
- // 						'm_name'			=> 'm_name',		//string 美甲师名称
- // 						'image_uri'			=> 'image_uri',		//string 产品图片地址
- // 						'cre_date'			=> 'cre_date',		//string 创建时间
- // 						'res_state'			=> 'res_state',		//int 操作结果：0 (失败) 1(成功)
- // 						'error_code'		=> 'error_code'		//string 错误代码，具体查看接口文档
- // 						);
-
 	function __construct() {
 		parent::__construct();
 		$this->load->model('product_model');
@@ -47,7 +32,10 @@ class Product extends CI_Controller {
 
 	public function index()
 	{
-		$this->load->view('welcome_message');
+		// $this->load->view('product message');
+		echo anchor(site_url('product/get_product_list')).'<br>';
+		echo anchor(site_url('product/get_product_info')).'<br>';
+		echo anchor(site_url('product/get_product_images')).'<br>';
 	}
 
 	/**
@@ -61,9 +49,10 @@ class Product extends CI_Controller {
 	 * @access public
 	 * @todo 
 	 */
-	function get_product_list($offset = 0, $limit = 10, $order = "", $desc = false)
+	function get_product_list($offset = 0, $limit = 10, $order_by = "", $order = "desc")
 	{
-		$res = $this->product_model->get_product_list();
+		$res = $this->product_model->get_product_list($offset, $limit, $order_by, $order);
+		header($this->config->item("header_json_utf8")); 
 		echo json_encode($res);
 		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
 	}
@@ -80,6 +69,7 @@ class Product extends CI_Controller {
 	{
 		// print_r($this->product_model->get_product_info($product_id));
 		$res = $this->product_model->get_product_info($product_id);
+		header($this->config->item("header_json_utf8")); 
 		echo json_encode($res);
 		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
 	}
@@ -95,6 +85,7 @@ class Product extends CI_Controller {
 	function get_product_images($product_id = 0)
 	{
 		$res = $this->product_model->get_product_images($product_id);
+		header($this->config->item("header_json_utf8")); 
 		echo json_encode($res);
 	}
 
