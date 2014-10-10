@@ -161,7 +161,8 @@ class User extends CI_Controller {
 	function register() {
 		$res = array(
 				$this->interface_fields['res_state'] => 0,
-				$this->interface_fields['error_code'] => '000'
+				$this->interface_fields['error_code'] => '000',
+				'token'	=>''
 				);
 		// form validation
 		$this->_init_login_validate();
@@ -169,6 +170,7 @@ class User extends CI_Controller {
 			$res[$this->interface_fields['error_code']] = '101';
 		} 
 		else {
+			$log_time = now();
 			$arr = array(
 				$this->db_fields['user_name'] => 
 								$this->input->post($this->interface_fields['user_name'],'0'),
@@ -176,7 +178,7 @@ class User extends CI_Controller {
 								$this->input->post($this->interface_fields['psd'],'0'),
 				$this->db_fields['avatar_uri'] =>
 								base_url().'assets/res/images/avatar.jpg',
-				$this->db_fields['register_date'] => now()
+				$this->db_fields['register_date'] => $log_time
 			);
 			// validate username 
 			if($this->user_model->get_user_by_uname(array_slice($arr, 0, 1)) != FALSE) {
@@ -192,13 +194,15 @@ class User extends CI_Controller {
 						$res = array_merge($res, $this->_gen_user_info($user));
 						$res[$this->interface_fields['res_state']] = 1;
 						$res[$this->interface_fields['error_code']] = '100';
+						$res['token'] = md5($res[$this->interface_fields['user_name']].
+									'1'.$log_time)
+								.rand(10, 99);
 					}
 					else {
 						$res[$this->interface_fields['error_code']] = '103';
 					}
 
 				}
-				
 			}
 		}
 		echo json_encode($res);
