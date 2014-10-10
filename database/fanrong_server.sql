@@ -231,8 +231,8 @@ CREATE TABLE IF NOT EXISTS `fr_product_image` (
 --
 
 INSERT INTO `fr_product_image` (`id`, `uri`, `height`, `width`, `pid`, `order`) VALUES
-(1, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', 10, 10, 3, 0),
-(2, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', 10, 10, 1, 0),
+(1, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 3, 0),
+(2, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 1, 0),
 (6, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 3, NULL),
 (7, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 3, NULL),
 (8, 'http://pic.nipic.com/2007-12-28/20071228114234633_2.jpg', 10, 10, 3, NULL),

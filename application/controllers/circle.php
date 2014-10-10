@@ -27,6 +27,7 @@ class Circle extends CI_Controller {
 		echo anchor(site_url('circle/get_circle_list')).'<br>';
 		echo anchor(site_url('circle/get_circle_info/1')).'<br>';
 		echo anchor(site_url('circle/get_circle_comments/1')).'<br>';
+		echo anchor(site_url('circle/get_circle_images/1')).'<br>';
 	}
 
 
@@ -50,6 +51,15 @@ class Circle extends CI_Controller {
 		echo json_encode($res);
 	}
 
+
+	/**
+	 * Get a circle information
+	 * @author fanz <2513273451@qq.com>
+	 * @param GET 	int 	circle id
+	 * @return NULL 
+	 * @access public
+	 * @todo 
+	 */
 	public function get_circle_info($circle_id = 0)
 	{
 		$this->load->model('circle_model', 'circle');
@@ -59,6 +69,33 @@ class Circle extends CI_Controller {
 		echo json_encode($res);
 	}
 
+	/**
+	 * Get a circle information
+	 * @author fanz <2513273451@qq.com>
+	 * @param GET 	int 	circle id
+	 * @return NULL 
+	 * @access public
+	 * @todo 
+	 */
+	function get_circle_images($circle_id = 0)
+	{
+		$res = $this->circle_model->get_circle_images($circle_id);
+		header($this->config->item("header_json_utf8")); 
+		echo json_encode($res);
+	}
+
+	/**
+	 * Get a circle comments information
+	 * @author fanz <2513273451@qq.com>
+	 * @param GET 	int 	circle_id 
+	 * @param GET 	int 	offset
+	 * @param GET 	int 	limit
+	 * @param GET 	string 	order
+	 * @param GET 	boolean	desc
+	 * @return NULL 
+	 * @access public
+	 * @todo 
+	 */
 	public function get_circle_comments($circle_id = 0, $offset = 0, $limit = 10, $order_by = "", $order = "desc")
 	{
 		$this->load->model('circle_comment_model', 'comment');

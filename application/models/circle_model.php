@@ -42,7 +42,7 @@
  						'user_type'			=> 'type',			//类型
  						'user_status'		=> 'status', 		//状态
  						// 表 $image_table
- 						'image_uri'			=> 'uri',			//string 产品图片地址
+ 						'image_uri'			=> 'uri',			//string 
  						'image_cid'			=> 'cid',			//int 外键 圈子id 
  						'image_order'		=> 'order',			//int  照片排序 
  						// 表 $comment_table
@@ -94,7 +94,7 @@
  					$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('circle_image').', '.
  					$this->user_table.'.'.$this->fields['user_nickname'].' as '.$this->config->item('u_nickname')
  					;
- 		// 'product.id as id, product.name as name, image.uri as image_uri'
+ 		// 'circle.id as id, circle.name as name, image.uri as image_uri'
  		$this->db->select($select);
  		$this->db->from($this->table_name);
  		$this->db->join($this->image_table, 
@@ -160,26 +160,26 @@
 
 
 
- 	// /**
- 	//  * Get a product images info
- 	//  * Created on 2014/10/01
- 	//  * @param int $product_id 
- 	//  * @return  array 查询成功返回对象数组
- 	//  * 			boolean 失败
- 	//  */
- 	// function get_product_images($product_id = 0)
- 	// {
- 	// 	$select = 
- 	// 		$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('image_uri');
- 	// 	$this->db->select($select);
- 	// 	$this->db->from($this->image_table);
- 	// 	$this->db->where($this->image_table.'.'.$this->fields['pid'].' = '.$product_id);
- 	// 	$res = $this->db->get();
- 	// 	if($res->num_rows() >= 1)
- 	// 		return $res->result_array();
- 	// 	else
- 	// 		return FALSE;
- 	// }
+ 	/**
+ 	 * Get a circle images info
+ 	 * Created on 2014/10/01
+ 	 * @param int $circle_id 
+ 	 * @return  array 查询成功返回对象数组
+ 	 * 			boolean 失败
+ 	 */
+ 	function get_circle_images($circle_id = 0)
+ 	{
+ 		$select = 
+ 			$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('circle_image');
+ 		$this->db->select($select);
+ 		$this->db->from($this->image_table);
+ 		$this->db->where($this->image_table.'.'.$this->fields['image_cid'].' = '.$circle_id);
+ 		$res = $this->db->get();
+ 		if($res->num_rows() >= 1)
+ 			return $res->result_array();
+ 		else
+ 			return FALSE;
+ 	}
 
  }
 
