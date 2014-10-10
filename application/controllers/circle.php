@@ -25,8 +25,8 @@ class Circle extends CI_Controller {
 	public function index()
 	{
 		echo anchor(site_url('circle/get_circle_list')).'<br>';
-		echo anchor(site_url('circle/get_circle_info')).'<br>';
-		echo anchor(site_url('circle/get_circle_comments')).'<br>';
+		echo anchor(site_url('circle/get_circle_info/1')).'<br>';
+		echo anchor(site_url('circle/get_circle_comments/1')).'<br>';
 	}
 
 

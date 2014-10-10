@@ -34,8 +34,8 @@ class Product extends CI_Controller {
 	{
 		// $this->load->view('product message');
 		echo anchor(site_url('product/get_product_list')).'<br>';
-		echo anchor(site_url('product/get_product_info')).'<br>';
-		echo anchor(site_url('product/get_product_images')).'<br>';
+		echo anchor(site_url('product/get_product_info/1')).'<br>';
+		echo anchor(site_url('product/get_product_images/1')).'<br>';
 	}
 
 	/**

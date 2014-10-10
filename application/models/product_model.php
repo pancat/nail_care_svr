@@ -31,7 +31,7 @@
  						// 表 $table_name
  						'product_id'		=> 'id'	,			//int 主键 产品id
  						'product_name'		=> 'name',			//string 产品名称
- 						'product_discribe'	=> 'discribe',		//string 描述
+ 						'product_describe'	=> 'describe',		//string 描述				error 待修改
  						'product_cre_date'	=> 'cre_date',		//string 创建时间
  						'product_hit'		=> 'hit',			//int
  						'product_mid'		=> 'mid', 			//int 外键 美甲师id
@@ -80,7 +80,7 @@
  	{
  		$select = $this->table_name.'.'.$this->fields['product_id'].' as '.$this->config->item('product_id').', '.
  					$this->table_name.'.'.$this->fields['product_name'].' as '.$this->config->item('product_name').', '.
- 					$this->table_name.'.'.$this->fields['product_discribe'].' as '.$this->config->item('product_discribe').', '.
+ 					$this->table_name.'.'.$this->fields['product_describe'].' as '.$this->config->item('product_describe').', '.
  					$this->table_name.'.'.$this->fields['product_cre_date'].' as '.$this->config->item('product_cre_date').', '.
  					$this->table_name.'.'.$this->fields['product_hit'].' as '.$this->config->item('product_hit').', '.
  					$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('product_image').', '.
@@ -127,7 +127,7 @@
  	{
  		$select = $this->table_name.'.'.$this->fields['product_id'].' as '.$this->config->item('product_id').', '.
  					$this->table_name.'.'.$this->fields['product_name'].' as '.$this->config->item('product_name').', '.
- 					$this->table_name.'.'.$this->fields['product_discribe'].' as '.$this->config->item('product_discribe').', '.
+ 					$this->table_name.'.'.$this->fields['product_describe'].' as '.$this->config->item('product_describe').', '.
  					$this->table_name.'.'.$this->fields['product_cre_date'].' as '.$this->config->item('product_cre_date').', '.
  					$this->table_name.'.'.$this->fields['product_hit'].' as '.$this->config->item('product_hit').', '.
  					$this->user_table.'.'.$this->fields['m_name'].' as '.$this->config->item('m_name')

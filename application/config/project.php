@@ -39,7 +39,7 @@ $config['u_status'] 		= 'u_status';
  */
 $config['product_id'] 		= 'p_id';
 $config['product_name'] 	= 'name';
-$config['product_discribe'] = 'discribe';
+$config['product_describe'] = 'p_describe';
 $config['product_hit'] 		= 'hit';
 $config['product_cre_date']	= 'cre_date';
 $config['product_image']	= 'image_uri';

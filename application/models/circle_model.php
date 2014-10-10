@@ -17,7 +17,7 @@
  	 * @var string
  	 */
  	protected $table_name = 'fr_circle';
- 	protected $image_table = 'fr_cicle_image'; 			// error 待修改
+ 	protected $image_table = 'fr_circle_image'; 			// error 待修改
  	protected $user_table = 'fr_user';
  	protected $comment_table = 'fr_circle_comment';
  	// protected $product_label = "fr_product_label";

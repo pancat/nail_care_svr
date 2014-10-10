@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2014 年 10 月 01 日 18:28
+-- 生成日期: 2014 年 10 月 10 日 18:33
 -- 服务器版本: 5.1.33
 -- PHP 版本: 5.2.9-2
 
@@ -36,21 +36,26 @@ CREATE TABLE IF NOT EXISTS `fr_banner_image` (
 -- --------------------------------------------------------
 
 --
--- 表的结构 `fr_cicle_image`
+-- 表的结构 `fr_circle_image`
 --
 
-CREATE TABLE IF NOT EXISTS `fr_cicle_image` (
+CREATE TABLE IF NOT EXISTS `fr_circle_image` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `image_uri` varchar(140) NOT NULL,
+  `uri` varchar(140) NOT NULL,
   `cid` int(11) NOT NULL,
+  `order` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `c_id` (`cid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 --
--- 导出表中的数据 `fr_cicle_image`
+-- 导出表中的数据 `fr_circle_image`
 --
 
+INSERT INTO `fr_circle_image` (`id`, `uri`, `cid`, `order`) VALUES
+(3, 'http://pic4.nipic.com/20090904/3268217_092431078457_2.jpg', 2, 0),
+(4, 'http://www.mf08s.com/y/c/UploadFiles_c/20140510/2014051012264300.jpg', 2, 1),
+(5, 'http://www.mf08s.com/y/c/UploadFiles_c/20140513/2014051312260091.jpg', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -63,15 +68,20 @@ CREATE TABLE IF NOT EXISTS `fr_circle` (
   `uid` int(11) NOT NULL,
   `title` varchar(40) NOT NULL,
   `content` varchar(400) NOT NULL,
-  `image_uri` varchar(40) NOT NULL,
+  `cre_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `type` smallint(6) NOT NULL DEFAULT '1' COMMENT '类型，1：已发表，2：精华，0：未发表，-1：已删除',
+  `hit` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 --
 -- 导出表中的数据 `fr_circle`
 --
 
+INSERT INTO `fr_circle` (`id`, `uid`, `title`, `content`, `cre_date`, `type`, `hit`) VALUES
+(1, 123, '十款轻熟女美甲图片 甜美清新不夸张', '这款美甲用不规则的图案表现出个性，大胆的撞色却不会有违和感，而且带着一丝俏皮可爱。如果你也是这张个性的女生，可不要错过这款美甲。', '0000-00-00 00:00:00', 1, 0),
+(2, 123, '魅惑众生 十指缠绕绽放女人魅力', '灯光下，高脚杯的酒红，轻捻兰花指，指尖上的红色与红酒的融合，蔓延在每个角落；红色，代表魅惑、性感、喜庆，无论你是萝莉，女王、还是文艺范和森女范，今天中国美业mf08s.com小编和姑凉们一起魅惑众生，绽放我们女人的魅力吧···', '0000-00-00 00:00:00', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -88,12 +98,18 @@ CREATE TABLE IF NOT EXISTS `fr_circle_comment` (
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 --
 -- 导出表中的数据 `fr_circle_comment`
 --
 
+INSERT INTO `fr_circle_comment` (`id`, `cid`, `uid`, `comments`, `cre_date`) VALUES
+(1, 1, 10, '这个不错啊！！', '0000-00-00 00:00:00'),
+(2, 1, 10, '这个不错啊！！', '2014-10-10 10:50:15'),
+(3, 2, 9, '这个不错啊！！', '2014-10-10 10:50:15'),
+(4, 1, 9, 'GOOD！！', '2014-10-10 10:50:15'),
+(5, 2, 6, 'On, my god！！', '2014-10-10 10:50:15');
 
 -- --------------------------------------------------------
 
@@ -116,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `fr_exp_pancat_file_information` (
   `file_share_authority` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`file_id`),
   KEY `FileNameIndex` (`file_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=27 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=27 ;
 
 --
 -- 导出表中的数据 `fr_exp_pancat_file_information`
@@ -174,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `fr_product` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(20) NOT NULL,
   `mid` int(11) NOT NULL COMMENT '美甲师 ID',
-  `discribe` varchar(100) DEFAULT NULL,
+  `describe` varchar(100) DEFAULT NULL,
   `cre_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `hit` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -185,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `fr_product` (
 -- 导出表中的数据 `fr_product`
 --
 
-INSERT INTO `fr_product` (`id`, `name`, `mid`, `discribe`, `cre_date`, `hit`) VALUES
+INSERT INTO `fr_product` (`id`, `name`, `mid`, `describe`, `cre_date`, `hit`) VALUES
 (1, '都市甜心SweetC', 9, '都市甜心SweetCity 美甲产品 环保指甲油 美甲套装 魅影精致OL', '2014-10-01 13:37:30', 0),
 (2, 'candymoyo', 9, 'candymoyo 膜玉糖果色丝绒指甲油毛绒甲天鹅绒毛甲美甲产品彩妆工具13色', '2014-10-01 13:37:30', 0),
 (3, '都市甜心SweetC', 9, '都市甜心SweetCity 美甲产品 环保焕彩指甲油 14ml 白羊红MDS19', '2014-10-01 13:37:30', 0),
@@ -289,7 +305,7 @@ CREATE TABLE IF NOT EXISTS `fr_user` (
   `remark` varchar(40) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_name` (`user_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户表' AUTO_INCREMENT=11 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户表' AUTO_INCREMENT=14 ;
 
 --
 -- 导出表中的数据 `fr_user`
@@ -304,24 +320,27 @@ INSERT INTO `fr_user` (`id`, `user_name`, `nick_name`, `password`, `gender`, `ag
 (7, '111', '', '111', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
 (8, '999', '', '999', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
 (9, '1234', '1234', '1234', 1, 0, '', NULL, NULL, '2014-10-01 13:33:24', '2014-10-01 13:33:24', NULL, 2, 1, 1, NULL),
-(10, '4321', '4321', '4321', 1, 0, '', NULL, NULL, '2014-10-01 13:34:08', '2014-10-01 13:34:08', NULL, 2, 1, 1, NULL);
+(10, '4321', '4321', '4321', 1, 0, '', NULL, NULL, '2014-10-01 13:34:08', '2014-10-01 13:34:08', NULL, 2, 1, 1, NULL),
+(11, '555', '', '555', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
+(12, '888', '', '888', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
+(13, '567', '', '567', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL);
 
 --
 -- 限制导出的表
 --
 
 --
--- 限制表 `fr_cicle_image`
+-- 限制表 `fr_circle_image`
 --
-ALTER TABLE `fr_cicle_image`
-  ADD CONSTRAINT `fr_cicle_image_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `fr_circle` (`id`);
+ALTER TABLE `fr_circle_image`
+  ADD CONSTRAINT `fr_circle_image_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `fr_circle` (`id`);
 
 --
 -- 限制表 `fr_circle_comment`
 --
 ALTER TABLE `fr_circle_comment`
-  ADD CONSTRAINT `fr_circle_comment_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `fr_user` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fr_circle_comment_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `fr_circle` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fr_circle_comment_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `fr_circle` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fr_circle_comment_ibfk_2` FOREIGN KEY (`uid`) REFERENCES `fr_user` (`id`) ON DELETE CASCADE;
 
 --
 -- 限制表 `fr_product_image`
@@ -333,5 +352,5 @@ ALTER TABLE `fr_product_image`
 -- 限制表 `fr_product_label`
 --
 ALTER TABLE `fr_product_label`
-  ADD CONSTRAINT `fr_product_label_ibfk_2` FOREIGN KEY (`lid`) REFERENCES `fr_label` (`id`),
-  ADD CONSTRAINT `fr_product_label_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `fr_product` (`id`);
+  ADD CONSTRAINT `fr_product_label_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `fr_product` (`id`),
+  ADD CONSTRAINT `fr_product_label_ibfk_2` FOREIGN KEY (`lid`) REFERENCES `fr_label` (`id`);
