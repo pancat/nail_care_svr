@@ -5,7 +5,7 @@
 		资源下载页面
 	</div>
 	<div id="header_right_bottom">
-		<a href="<?php echo site_url('pancat/upload/uploadfile')?>">上传文件>></a>
+		<a href="<?php echo site_url('Pancat/upload/uploadfile')?>">上传文件>></a>
 	</div>
 </div> <!-- end body_header -->
 
