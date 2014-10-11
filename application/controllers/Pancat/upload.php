@@ -34,7 +34,7 @@ class Upload extends CI_Controller{
 		// $data['swf'] = $this->config->item('base_url').'/assets/res/video/uploadify.swf';
 		
 		// $data['page'] = site_url('pancat/upload/handle');
-		$data['topage'] = site_url('pancat/upload/scan');
+		$data['topage'] = site_url('Pancat/upload/scan');
 		// $data['css'] = addprefix($this->config->item('base_url').'/css/uploadify/upload',array('.css','ify.css'));
 		
 		$this->load->view('template/header',$data_head);
