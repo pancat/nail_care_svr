@@ -57,22 +57,32 @@ class Upload extends CI_Controller{
 				echo '0'.'file already exits';
 				return ;
 			}
-			move_uploaded_file($tempFile,$targetFilePath);
+
+			if(move_uploaded_file($tempFile,$targetFilePath))
+			{
+				//transfer database
+				date_default_timezone_set('PRC');
+				$data[Fileupload_model::FILE_NAME] = $_FILES['Filedata']['name'];
+				$data[Fileupload_model::FILE_DOWNLOAD_ADDR] = $targeturl;
+				$data[Fileupload_model::FILE_SIZE_KB] = (int) ($_FILES['Filedata']['size'] /1024);
+				$data[Fileupload_model::FILE_UPLOAD_TIME] = date('Y-m-d H:i:s');
+				$data[Fileupload_model::FILE_TWODIM_IMAGE_ADDR] = site_url('pancat/upload/twodim/');
+				$data[Fileupload_model::FILE_TYPE] = 'apk';
+				
+				$this->fileupload_model->insert_fileinfo($data);
+				echo '1'.$targetFilePath;
+				return ;
+			}
+			else {
+				echo '0,upload file failed.'.$targetFilePath;
+			}
 			
-			//transfer database
-			date_default_timezone_set('PRC');
-			$data[Fileupload_model::FILE_NAME] = $_FILES['Filedata']['name'];
-			$data[Fileupload_model::FILE_DOWNLOAD_ADDR] = $targeturl;
-			$data[Fileupload_model::FILE_SIZE_KB] = (int) ($_FILES['Filedata']['size'] /1024);
-			$data[Fileupload_model::FILE_UPLOAD_TIME] = date('Y-m-d H:i:s');
-			$data[Fileupload_model::FILE_TWODIM_IMAGE_ADDR] = site_url('pancat/upload/twodim/');
-			$data[Fileupload_model::FILE_TYPE] = 'apk';
-			
-			$this->fileupload_model->insert_fileinfo($data);
-			echo '1'.$targetFilePath;
-			return ;
 		}
-		echo '0';
+		else
+		{
+			echo '0, upload file is empty!';
+		}
+		// echo '0';
 	}
 	
 	public function _remap($method =""){
