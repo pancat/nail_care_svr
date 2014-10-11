@@ -7,7 +7,7 @@
 $(document).ready(function(){
 	$('#file_upload').uploadify({
 		'swf'	: "<?php echo base_url();?>assets/res/video/uploadify.swf",
-		'uploader' : "<?php echo site_url('pancat/upload/handle') ?>",
+		'uploader' : "<?php echo site_url('Pancat/upload/handle') ?>",
 		'auto'	: true,
 		'buttonText' : '上传文件',
 		'fileSizeLimit' : '100MB',
@@ -81,7 +81,7 @@ function showError(file,errorMsg)
 			<input type="file" name="file_upload" id="file_upload" />
 		</div>
 		<div id="twodimscan">
-			<a href="<?php echo $topage;/*site_url('pancat/upload/scan') */?>">进入资源下载页面 >></a>
+			<a href="<?php echo $topage;/*site_url('Pancat/upload/scan') */?>">进入资源下载页面 >></a>
 		</div>
 		<div id="info">
 			文件上传数：

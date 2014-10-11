@@ -46,8 +46,8 @@ class Upload extends CI_Controller{
 	}
 	public function handle()
 	{
-		
 		$this->load->helper('date');
+		log_message("deubg", "Pancat/upload/handle initial.");
 		if(!empty($_FILES))
 		{
 			$tempFile = $_FILES['Filedata']['tmp_name'];
@@ -66,7 +66,7 @@ class Upload extends CI_Controller{
 				$data[Fileupload_model::FILE_DOWNLOAD_ADDR] = $targeturl;
 				$data[Fileupload_model::FILE_SIZE_KB] = (int) ($_FILES['Filedata']['size'] /1024);
 				$data[Fileupload_model::FILE_UPLOAD_TIME] = date('Y-m-d H:i:s');
-				$data[Fileupload_model::FILE_TWODIM_IMAGE_ADDR] = site_url('pancat/upload/twodim/');
+				$data[Fileupload_model::FILE_TWODIM_IMAGE_ADDR] = site_url('Pancat/upload/twodim/');
 				$data[Fileupload_model::FILE_TYPE] = 'apk';
 				
 				$this->fileupload_model->insert_fileinfo($data);
