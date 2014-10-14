@@ -96,6 +96,64 @@
  			return FALSE;
  	}
 
+ 	/**
+ 	 * Insert a circle's comment item 
+ 	 * Created on 2014/9/25
+ 	 * @param array $arr =
+ 	 *				int 		'comment_uid'  				登录id
+ 	 * 				int 		'comment_cid' 				圈子id
+ 	 *				string 		'comments' 					评论内容
+ 	 * @return  boolean 	true 	插入数据成功
+ 	 * 			boolean 	false 	失败
+ 	 */
+ 	function insert_entry($arr)
+ 	{
+ 		$this->db->insert($this->table_name, $arr);
+ 		log_message('debug', $this->db->last_query().'; comment_id: '.$this->db->insert_id().'; affected_rows: '.$this->db->affected_rows());
+ 		if($this->db->affected_rows() > 0)
+ 			return TRUE;
+ 		else
+ 			return FALSE;
+ 	}
+
+
+ 	/**
+ 	 * Delete a comment item 
+ 	 * Created on 2014/10/14
+ 	 * @param array $arr =
+ 	 *				int 		'comment_uid'  				评论id
+ 	 * @return  boolean 	true 	插入数据成功
+ 	 * 			boolean 	false 	失败
+ 	 */
+ 	function delete_entry($comment_id)
+ 	{
+ 		$this->db->delete($this->table_name, $arr);
+ 		log_message('debug', $this->db->last_query().'; comment_id: '.$this->db->insert_id().'; affected_rows: '.$this->db->affected_rows());
+ 		if($this->db->affected_rows() > 0)
+ 			return TRUE;
+ 		else
+ 			return FALSE;
+ 	}
+
+ 	/**
+ 	 * Delete all comments of a circle
+ 	 * Created on 2014/10/14
+ 	 * @param array $arr =
+ 	 * 				int 		'comment_cid' 				圈子id
+ 	 * @return  boolean 	true 	插入数据成功
+ 	 * 			boolean 	false 	失败
+ 	 */
+ 	function delete_entries_by_cid($comment_id)
+ 	{
+ 		$this->db->delete($this->table_name, $arr);
+ 		log_message('debug', $this->db->last_query().'; comment_id: '.$this->db->insert_id().'; affected_rows: '.$this->db->affected_rows());
+ 		if($this->db->affected_rows() > 0)
+ 			return TRUE;
+ 		else
+ 			return FALSE;
+ 	}
+
+
  }
 
 

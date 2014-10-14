@@ -14,7 +14,7 @@ class Test extends CI_Controller {
 
 	function __construct() {
 		parent::__construct();
-		$this->load->library('session');
+		// $this->load->library('session');
 		$this->load->model('user_model','user');
 		$this->load->helper('form');
 		$this->db_fields = $this->user->get_fields();
@@ -56,6 +56,25 @@ class Test extends CI_Controller {
 		$this->load->view('test/login',$data);
 	}
 
+	public function getsession($sessionid)
+	{
+		session_id($sessionid);
+		session_start();
+		echo $sessionid.'|'.strlen($sessionid).'|';
+		if(isset($_SESSION['username']))
+			echo $_SESSION['username'];
+		else
+			echo 'sessionid not existed! please login!';
+		// unset($_SESSION['$sessionid']);
+	}
+
+	public function logoff($sessionid)
+	{
+		session_id($sessionid);
+		session_start();
+		session_destroy();
+	}
+
 	public function register()
 	{
 		
@@ -90,6 +109,9 @@ class Test extends CI_Controller {
               'size'        => '50',
               'style'       => 'width:50%',
             );
+		// $data = array_chunk($arr1, 2, true);
+		// print_r($data[1]);
+
 		$data['form_input'] = form_input($arr1);
 		$data['form_submit'] = form_submit('submit','submit');
 		$this->load->view('test/userinfo',$data);

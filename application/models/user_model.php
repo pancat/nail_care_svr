@@ -18,6 +18,7 @@
  	 */
  	protected $table_name = 'user';
 
+ 	const TABLE_NAME = 'user';
  	/**
  	 * 表字段的名称
  	 * @var array
@@ -121,7 +122,7 @@
  	}
 
  	/**
- 	 * Get a user item 
+ 	 * Insert a user item 
  	 * Created on 2014/9/25
  	 * @param array $arr =
  	 *				string 		'username'  		登录用户名

@@ -34,44 +34,40 @@ class User extends CI_Controller {
 	/**
 	 * 外部接口字段名($value是外部接口的字段名称)
 	 */
-	protected $interface_fields = array(
- 						'user_id'			=> 'id'	,			//int 主键 id
- 						'user_name'			=> 'username',		//string 登录用户名
- 						'psd'				=> 'password',		//string 登录密码
- 						'nick_name'			=> 'nick_name',		//string 昵称
- 						'age'				=> 'age',			//int 年龄
- 						'email'				=> 'email',			//string 邮箱
- 						'address'			=> 'address',		//string 地址
- 						'avatar_uri'		=> 'avatar_uri',	//string 头像uri
- 						'register_date'		=> 'register_date', //string 注册时间
- 						'last_login'		=> 'last_login', 	//string 最近登录时间
- 						'last_ip'			=> 'last_ip',		//string 最近登录ip
- 						'status'			=> 'status',		//int 状态：1（正常），0（冻结），-1（删除）
- 						'level'				=> 'level',			//int 等级：1（普通用户）...
- 						'remark'			=> 'remark',		//string 备注
- 						'res_state'			=> 'res_state',		//int 操作结果：0 (失败) 1(成功)
- 						'error_code'		=> 'error_code'		//string 错误代码，具体查看接口文档
- 						);
+	const USER_ID 			= 'id';
+	const USER_NAME 		= 'username';
+	const PSD 				= 'password';
+	const NICK_NAME 		= 'nick_name';
+	const AGE 				= 'age';
+	const EMAIL 			= 'email';
+	const ADDR 				= 'address';
+	const AVATAR_URI 		= 'avatar_uri';
+	const REG_DATE 			= 'register_date';
+	const LAST_LOGIN 		= 'last_login';
+	const LAST_IP 			= 'last_ip';
+	const STATUS 			= 'status';
+	const LEVEL 			= 'level';
+	const REMARK 			= 'remark';
+	
+	const RES_CODE 			= 'code';
+
 	/**
 	 * session的字段名
 	 */
-	protected $session_fields = array(
-								'user_id'	=>	'id',
-								'user_name' =>	'name',
-								'level'		=>	'level',
-								'logged_in' =>	'is_logged',
-								'log_time' =>	'log_time'
-							);
+	const SESSION_ID 		= 'sessionid';
+	const SESSION_UID 		= 'uid';
+	const SESSION_DATE 		= 'last_date'; 
+
 
 	function __construct() {
 		parent::__construct();
-		$this->load->library('session');
 		$this->load->model('user_model');
 		$this->load->helper('date');
 		$this->db_fields = $this->user_model->get_fields();
+		//session_start();
 	}
 
-	public function index()
+	function index()
 	{
 		$this->load->view('welcome_message');
 	}
@@ -86,58 +82,97 @@ class User extends CI_Controller {
 	 */
 	public function login()
 	{	
+		
 		$res = array(
-				$this->interface_fields['res_state'] => 0,
-				$this->interface_fields['error_code'] => '000',
-				'token'	=>''
+				self::RES_CODE 		=> '0',
+				self::SESSION_ID	=>	''
 				);
-
 		// form validation
 		$this->_init_login_validate();
 		if($this->form_validation->run() == FALSE) {
-			$res[$this->interface_fields['error_code']] = '101';
+			$res[self::RES_CODE] = '101';
 		} 
 		else {
 			$arr = array(
 				$this->db_fields['user_name'] => 
-								$this->input->post($this->interface_fields['user_name'],'0'),
+								$this->input->post(self::USER_NAME,'0'),
 				$this->db_fields['psd'] =>
-								$this->input->post($this->interface_fields['psd'],'0'),
+								$this->input->post(self::PSD,'0'),
 			);
 			$data = $this->user_model->get_user_by_np($arr);
-			
 			if($data != FALSE) {
 				// set session
 				$data = $this->_gen_user_info($data);
 				$log_time = now();
 				$logtime = date('Y-m-d H:i:s',$log_time);
 	 			$lastip = $this->input->ip_address();
-	 			$session_data = array(
-	 					$this->session_fields['user_id'] => $data[$this->interface_fields['user_id']],
-	 					$this->session_fields['user_name'] => $data[$this->interface_fields['user_name']],
-	 					$this->session_fields['logged_in'] => TRUE,
-	 					$this->session_fields['log_time'] => $log_time,
-	 					$this->session_fields['level'] => $data[$this->interface_fields['level']]
-						);
-	 			$this->session->set_userdata($session_data);
 
-				$res[$this->interface_fields['res_state']] = 1;
-				$res[$this->interface_fields['error_code']] = '100';
+	 			
+				$sessionid = '';
+	 			$is_login = $this->_doAuthUser(& $sessionid, $data[self::USER_ID]);
+	 			
+	 			$session_data = array(
+	 					self::SESSION_ID => $sessionid,
+	 					self::SESSION_UID => $data[self::USER_ID],
+	 					self::SESSION_DATE => $logtime,
+						);
+
+	 			$this->load->model('session_model');
+	 			if(!$is_login) {
+	 				$this->session_model->insert_userdata($session_data);
+	 			}
+	 			else
+	 				$this->session_model->update_userdata($session_data);
+
+				$_SESSION['$sessionid'] = $sessionid;
+	 			// 
+	 			// $_SESSION['is_login'] = True;
+				$res[self::RES_CODE] = '1';
 				// set token
-				$res['token'] = md5($data[$this->interface_fields['user_name']].
-									$data[$this->interface_fields['level']].$log_time)
-								.rand(10, 99);
+				$res['sessionid'] = $sessionid;
 				$res = array_merge($res,$data);
 			}
 			else {
-				$res[$this->interface_fields['error_code']] = '102';
+				$res[self::RES_CODE] = '102';
 			}
 		}
+
 		header($this->config->item("header_json_utf8")); 
 		echo json_encode($res);
+
 		//for test
 		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
 	}
+
+	/**
+	 * Logoff
+	 * @author fanz <2513273451@qq.com>
+	 * @param POST int user_id, string session
+	 * @return NULL 
+	 * @access public
+	 * @todo 判断数据库删除结果
+	 */
+	public function logoff($user_id = '', $sessionid = '')
+	{
+		$data = array( self::RES_CODE => '0' );
+		// echo json_encode($res); 
+		if($sessionid != '' && $user_id != '') {
+			session_id($sessionid);
+			session_start();
+			session_destroy();
+			$this->load->model('session_model');
+	 		$res = $this->session_model->del_item(array(
+	 									session_model::	SESSION_ID 	=> $sessionid,
+	 									session_model::	USER_ID 	=> $user_id
+	 								));
+ 			$data[self::RES_CODE] = '1';
+	 		
+		} else {
+			$data[self::RES_CODE] = '101';
+		}
+		echo json_encode($data);
+	}
+
 
 	/**
 	 * 登录表单验证规则的初始化
@@ -147,8 +182,8 @@ class User extends CI_Controller {
 	private function _init_login_validate() {
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-		$this->form_validation->set_rules($this->interface_fields['user_name'], '用户名', 'trim|required|is_natural|min_length[1]|xss_clean');
-		$this->form_validation->set_rules($this->interface_fields['psd'], '密码', 'trim|required');
+		$this->form_validation->set_rules(self::USER_NAME, '用户名', 'trim|required|is_natural|min_length[1]|xss_clean');
+		$this->form_validation->set_rules(self::PSD, '密码', 'trim|required');
 	}
 
 	/**
@@ -161,9 +196,7 @@ class User extends CI_Controller {
 	 */
 	function register() {
 		$res = array(
-				$this->interface_fields['res_state'] => 0,
-				$this->interface_fields['error_code'] => '000',
-				'token'	=>''
+				self::RES_CODE => '0'
 				);
 		// form validation
 		$this->_init_login_validate();
@@ -174,16 +207,16 @@ class User extends CI_Controller {
 			$log_time = now();
 			$arr = array(
 				$this->db_fields['user_name'] => 
-								$this->input->post($this->interface_fields['user_name'],'0'),
+								$this->input->post(self::USER_NAME,'0'),
 				$this->db_fields['psd'] =>
-								$this->input->post($this->interface_fields['psd'],'0'),
+								$this->input->post(self::PSD,'0'),
 				$this->db_fields['avatar_uri'] =>
 								base_url().'assets/res/images/avatar.jpg',
 				$this->db_fields['register_date'] => $log_time
 			);
 			// validate username 
 			if($this->user_model->get_user_by_uname(array_slice($arr, 0, 1)) != FALSE) {
-				$res[$this->interface_fields['error_code']] = '102';
+				$res[self::RES_CODE] = '102';
 			} 
 			else {
 				$insert_res = $this->user_model->insert_entry($arr);
@@ -193,14 +226,10 @@ class User extends CI_Controller {
 					$user = $this->user_model->get_user_by_uname(array_slice($arr, 0, 1));
 					if($user == true) {
 						$res = array_merge($res, $this->_gen_user_info($user));
-						$res[$this->interface_fields['res_state']] = 1;
-						$res[$this->interface_fields['error_code']] = '100';
-						$res['token'] = md5($res[$this->interface_fields['user_name']].
-									'1'.$log_time)
-								.rand(10, 99);
+						$res[self::RES_CODE] = '1';
 					}
 					else {
-						$res[$this->interface_fields['error_code']] = '103';
+						$res[self::RES_CODE] = '103';
 					}
 
 				}
@@ -219,8 +248,7 @@ class User extends CI_Controller {
 	 * @access public
 	 * @todo 
 	 */
-	function get_user_info()
-	{
+	function get_user_info() {
 		$res = array(
 				$this->interface_fields['res_state'] => 0,
 				$this->interface_fields['error_code'] => '000'
@@ -266,16 +294,16 @@ class User extends CI_Controller {
 	private function _gen_user_info($data)
 	{
 		$arr = array(
-			$this->interface_fields['user_id']			=> 	$data[$this->db_fields['user_id']],
-			$this->interface_fields['user_name']		=>	$data[$this->db_fields['user_name']],
-			$this->interface_fields['nick_name']		=>	$data[$this->db_fields['nick_name']],
+			self::USER_ID				=> 	$data[$this->db_fields['user_id']],
+			self::USER_NAME				=>	$data[$this->db_fields['user_name']],
+			self::NICK_NAME				=>	$data[$this->db_fields['nick_name']],
 			// $this->interface_fields['psd'] 				=>	$data[$this->db_fields['psd']],
-			$this->interface_fields['age']				=>	$data[$this->db_fields['age']],
-			$this->interface_fields['status']			=>	$data[$this->db_fields['status']],
-			$this->interface_fields['email']			=>	$data[$this->db_fields['email']],
-			$this->interface_fields['level']			=>	$data[$this->db_fields['level']],
-			$this->interface_fields['avatar_uri']		=>	$data[$this->db_fields['avatar_uri']],
-			$this->interface_fields['address']			=>	$data[$this->db_fields['address']]
+			self::AGE					=>	$data[$this->db_fields['age']],
+			self::STATUS				=>	$data[$this->db_fields['status']],
+			self::EMAIL					=>	$data[$this->db_fields['email']],
+			self::LEVEL					=>	$data[$this->db_fields['level']],
+			self::AVATAR_URI			=>	$data[$this->db_fields['avatar_uri']],
+			self::ADDR					=>	$data[$this->db_fields['address']]
 		);
 
 		return $arr;
@@ -311,9 +339,42 @@ class User extends CI_Controller {
 	 * @todo
 	 * @access private
 	 */
-	private function _token_validation($token) {
-		return TRUE;
+	private function _doAuthUser($sessionid = '', $user_id = '') {
+		session_start();
+		$sessionid = session_id();
+		if($user_id == '')
+			return FALSE;
+		// session_id($sessionid);
+		// session_start();
+		if(!isset($_SESSION[self::SESSION_UID]) || !$_SESSION[self::SESSION_UID] == $user_id)
+			$_SESSION[self::SESSION_UID] = $user_id;
+
+		$this->load->model('session_model');
+		$res = $this->session_model->is_login( array(
+								session_model::SESSION_ID => $sessionid,
+								session_model::USER_ID    => $user_id
+							));
+		return $res;
 	}
+
+
+	/**
+ 	 * Delete a comment item 
+ 	 * Created on 2014/10/14
+ 	 * @param array $arr =
+ 	 *				int 		'user_id'  					用户id
+ 	 *				int 		'comment_uid'  				评论id
+ 	 *				int 		'comment_uid'  				评论id
+ 	 *				int 		'comment_uid'  				评论id
+ 	 * @return  boolean 	true 	插入数据成功
+ 	 * 			boolean 	false 	失败
+ 	 */
+ 	function delete_entry($comment_id)
+ 	{
+ 		// $token = $this->
+ 		// if($this->_doAuthUser())
+ 		
+ 	}
 }
 
 /* End of file user.php */
