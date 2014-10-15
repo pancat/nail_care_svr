@@ -10,6 +10,11 @@ class ICircle {
 	const HIT      = 'hit';
 	const CRE_DATE = 'cre_date';
 	const IMAGE    = 'image_uri';
+
+
+
+	const UPLOAD_FIELD_NAME 	= 'uploadfile';
+	const UPLOAD_PATH 			= './assets/res/circle_images';
 }
 
 /* End of file ICircle.php */

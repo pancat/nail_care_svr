@@ -17,6 +17,7 @@ class Test extends CI_Controller {
 		// $this->load->library('session');
 		$this->load->model('user_model','user');
 		$this->load->helper('form');
+		
 		// $this->db_fields = $this->user->get_fields();
 	}
 
@@ -54,6 +55,12 @@ class Test extends CI_Controller {
 		$data['form_psd'] = form_password($arr2);
 		$data['form_submit'] = form_submit('submit','submit');
 		$this->load->view('test/login',$data);
+	}
+
+	public function uploadfile()
+	{
+		
+		$this->load->view('test/upload',array('error' => ''));
 	}
 
 	public function getsession($sessionid)

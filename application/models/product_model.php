@@ -100,6 +100,7 @@
  		$select = self::TABLE_NAME.'.'.self::ID.' as '.IProduct::ID.', '.
  					self::TABLE_NAME.'.'.self::NAME.' as '.IProduct::NAME.', '.
  					self::TABLE_NAME.'.'.self::DESCRIBE.' as '.IProduct::DESCRIBE.', '.
+ 					self::TABLE_NAME.'.'.self::THUMB_IMAGE.' as '.IProduct::IMAGE.', '.
  					self::TABLE_NAME.'.'.self::CRE_DATE.' as '.IProduct::CRE_DATE.', '.
  					self::TABLE_NAME.'.'.self::HIT.' as '.IProduct::HIT.', '.
  					self::IMAGE_TABLE.'.'.product_image_model::URI.' as '.IProduct::IMAGE.', '.

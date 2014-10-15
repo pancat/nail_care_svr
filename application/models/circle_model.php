@@ -39,6 +39,7 @@
  	const CRE_DATE = 'cre_date';
  	const HIT      = 'hit';
  	const UID      = 'uid';
+ 	const IMAGE    = 'thumb_image';
 
  	protected $fields = array(
  						// 表 $table_name
@@ -202,6 +203,30 @@
  		else
  			return FALSE;
  	}
+
+ 	/**
+ 	 * Insert a circle  item 
+ 	 * Created on 2014/10/15
+ 	 * @param array $arr =
+ 	 *				int 		'uid'  				登录id
+ 	 * 				int 		'' 				圈子id
+ 	 *				string 		'comments' 					评论内容
+ 	 * @return  boolean 	true 	插入数据成功
+ 	 * 			boolean 	false 	失败
+ 	 */
+ 	function insert_entry($entry)
+ 	{
+ 		$this->db->insert(self::TABLE_NAME, $entry);
+ 		if($this->db->affected_rows() > 0) {
+ 			log_message('debug', $this->db->last_query().'; id: '.$this->db->insert_id().'; affected_rows: '.$this->db->affected_rows());
+ 			return $this->db->insert_id();
+ 		}
+ 		else {
+ 			log_message('debug', $this->db->last_query());
+ 			return FALSE;
+ 		}
+ 	}
+
 
  }
 

@@ -153,7 +153,6 @@ class CI_Upload {
 		// Is the upload path valid?
 		if ( ! $this->validate_upload_path())
 		{
-			// errors will already be set by validate_upload_path() so just return FALSE
 			return FALSE;
 		}
 
@@ -701,6 +700,7 @@ class CI_Upload {
 	{
 		if ($this->upload_path == '')
 		{
+			log_message('debug',$this->upload_path);
 			$this->set_error('upload_no_filepath');
 			return FALSE;
 		}

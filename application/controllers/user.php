@@ -44,7 +44,8 @@ class User extends CI_Controller {
 		$this->load->model('user_model');
 		$this->load->helper('date');
 		$this->load->library('IUser');
-
+		$this->load->library('ICircle');
+		$this->config->load('project');
 		//session_start();
 	}
 
@@ -61,8 +62,7 @@ class User extends CI_Controller {
 	 * @access public
 	 * @todo delete test code
 	 */
-	public function login()
-	{	
+	public function login() {	
 		
 		$res = array(
 				IUser::RES_CODE 		=> '0',
@@ -88,11 +88,11 @@ class User extends CI_Controller {
 
 	 			
 				$sessionid = '';
-	 			$is_login = $this->_doAuthUser(& $sessionid, $data[IUser::USER_ID]);
+	 			$is_login = $this->_doAuthUser(& $sessionid, $data[IUser::ID]);
 	 			
 	 			$session_data = array(
 	 					self::SESSION_ID => $sessionid,
-	 					self::SESSION_UID => $data[IUser::USER_ID],
+	 					self::SESSION_UID => $data[IUser::ID],
 	 					self::SESSION_DATE => $logtime,
 						);
 
@@ -131,8 +131,7 @@ class User extends CI_Controller {
 	 * @access public
 	 * @todo 判断数据库删除结果
 	 */
-	public function logoff($user_id = '', $sessionid = '')
-	{
+	public function logoff($user_id = '', $sessionid = '') {
 		$data = array( IUser::RES_CODE => '0' );
 		// echo json_encode($res); 
 		if($sessionid != '' && $user_id != '') {
@@ -151,20 +150,7 @@ class User extends CI_Controller {
 		}
 		echo json_encode($data);
 	}
-
-
-	/**
-	 * 登录表单验证规则的初始化
-	 * @author fanz <251327341@qq.com>
-	 * @todo 修改用户名规则
-	 */
-	private function _init_login_validate() {
-		$this->load->helper('form');
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules(IUser::USER_NAME, '用户名', 'trim|required|is_natural|min_length[1]|xss_clean');
-		$this->form_validation->set_rules(IUser::PSD, '密码', 'trim|required');
-	}
-
+	
 	/**
 	 * Register
 	 * @author fanz <251327341@qq.com>
@@ -251,6 +237,106 @@ class User extends CI_Controller {
 		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
 	}
 
+
+	function add_circle() {
+
+		$res = array( IUser::RES_CODE => '1');
+		$id = $this->input->post('id');
+		$session_id = $this->input->post('sessionid');
+		$add_time = now();
+		$field_name = ICircle::UPLOAD_FIELD_NAME;
+		$arr_name = explode(".", $_FILES[$field_name]['name']);
+		$upload_time = now();
+
+		$config['upload_path'] = ICircle::UPLOAD_PATH;
+		$config['allowed_types'] = 'gif|jpg|png';
+  		$config['max_size'] = '10000';
+  		$config['max_width']  = '2048';
+  		$config['max_height']  = '2048';
+		$config['file_name'] = date('YmdHis',$add_time).$id.rand(10,99).'.'.end($arr_name);
+		$this->load->library('upload', $config);
+  		if( !$this->upload->do_upload($field_name))
+  		{
+  			$res[IUser::RES_CODE] = '101';
+  			log_message('error', $this->upload->display_errors());
+  		}
+  		else {
+			$this->load->model('circle_model');
+			$entry = array(
+						circle_model::TITLE 	=> $this->input->post('title'),
+						circle_model::CONTENT 	=> $this->input->post('content'),
+						circle_model::IMAGE 	=> base_url().trim($config['upload_path'],'./').$config['file_name'],
+						circle_model::CRE_DATE 	=> date('Y-m-d H:i:s', $add_time),
+						circle_model::UID 		=> $id
+					);
+
+			$cid = $this->circle_model->insert_entry($entry);
+
+			if($cid == FALSE)
+			{
+				$res[IUser::RES_CODE]  = '101';
+			}
+			else {
+				$image_entry = array(
+									circle_image_model::URI => base_url().trim($config['upload_path'],'./').$config['file_name'],
+			  						circle_image_model::CID => $cid,
+			  						circle_image_model::ORDER => 1,
+								);
+				$this->load->model('circle_image_model');
+				$this->circle_image_model->insert_entry($image_entry);
+				$res['cid'] = $cid;
+
+			}
+  		}
+  		echo json_encode($res);
+	}
+
+
+	// function add_circle_image() {
+
+	// 	// $this->load->helper('path');
+	// 	$res = array( IUser::RES_CODE => '1');
+
+	// 	$id = $this->input->post('id');
+	// 	$cid = $this->input->post('cid');
+	// 	$session_id = $this->input->post('sessionid');
+	// 	$field_name = ICircle::UPLOAD_FIELD_NAME;
+	// 	$upload_time = now();
+	// 	$arr_name = explode(".", $_FILES[$field_name]['name']);
+
+	// 	$config['upload_path'] = ICircle::UPLOAD_PATH;
+	// 	$config['allowed_types'] = 'gif|jpg|png';
+ //  		$config['max_size'] = '100';
+ //  		$config['max_width']  = '1024';
+ //  		$config['max_height']  = '768';
+
+ //  		$config['file_name'] = date('YmdHis',now()).$id.rand(10,99).'.'.end($arr_name);
+	// 	$this->load->library('upload', $config);
+ //  		if( !$this->upload->do_upload($field_name))
+ //  		{
+ //  			$res[IUser::RES_CODE] = '101';
+ //  			log_message('error', $this->upload->display_errors());
+ //  		}
+ //  		else {
+ //  			$this->load->model('circle_image_model');
+ //  			$entry = array(
+ //  						circle_image_model::URI => base_url().trim($config['upload_path'],'./').$config['file_name'],
+ //  						circle_image_model::CID => $cid,
+ //  						circle_image_model::UID => $id,
+ //  						circle_image_model::CID => $cid,
+ //  					);
+ //  			$this->circle_image_model->insert_entry($entry);
+ //  		}
+ //  		print_r($this->upload->data());
+ //  		echo $res;
+	// }
+
+	function del_circle_image($id = '') {
+		$this->load->model('circle_image_model');
+		$this->circle_image_model->delete_entry(array(circle_image_model::ID => $id));
+	}
+
+
 	/**
 	 * 将从数据库中取得的一个用户的信息进行编码
 	 * $data中的字段名称与数据库有关
@@ -260,8 +346,7 @@ class User extends CI_Controller {
 	 * @access private
 	 * @todo
 	 */
-	private function _gen_user_info($data)
-	{
+	private function _gen_user_info($data) {
 		$arr = array(
 			IUser::ID						=> 	$data[user_model::ID],
 			IUser::USER_NAME				=>	$data[user_model::USER_NAME],
@@ -277,26 +362,6 @@ class User extends CI_Controller {
 
 		return $arr;
 	}
-
-	// /**
-	//  * 将从数据库中取得的多个用户的信息进行编码
-	//  * $data中的字段名称与数据库有关
-	//  * @author fanz <251327341@qq.com>
-	//  * @param array
-	//  * @return array 
-	//  * @access private
-	//  * @todo
-	//  */
-	// private function _gen_users_info($datas)
-	// {
-	// 	$arrs = array();
-	// 	foreach ($datas as $item) {
-	// 		$temp = $this->_gen_user_info($item);
-	// 		$arr1 = array($temp['userid'] => $temp);
-	// 		$arrs = array_merge($arrs, $arr1);
-	// 	}
-	// 	return $arrs;
-	// }
 
 	/**
 	 * 验证sessionid
@@ -326,6 +391,18 @@ class User extends CI_Controller {
 		return $res;
 	}
 
+	/**
+	 * 登录表单验证规则的初始化
+	 * @author fanz <251327341@qq.com>
+	 * @todo 修改用户名规则
+	 */
+	private function _init_login_validate() {
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules(IUser::USER_NAME, '用户名', 'trim|required|is_natural|min_length[1]|xss_clean');
+		$this->form_validation->set_rules(IUser::PSD, '密码', 'trim|required');
+	}
+
 
 	/**
  	 * Delete a comment item 
@@ -338,12 +415,36 @@ class User extends CI_Controller {
  	 * @return  boolean 	true 	插入数据成功
  	 * 			boolean 	false 	失败
  	 */
- 	function delete_entry($comment_id)
+ 	function delete_comment($id ='', $uid = '')
  	{
  		// $token = $this->
  		// if($this->_doAuthUser())
  		
  	}
+
+
+ 		// /**
+	//  * 将从数据库中取得的多个用户的信息进行编码
+	//  * $data中的字段名称与数据库有关
+	//  * @author fanz <251327341@qq.com>
+	//  * @param array
+	//  * @return array 
+	//  * @access private
+	//  * @todo
+	//  */
+	// private function _gen_users_info($datas)
+	// {
+	// 	$arrs = array();
+	// 	foreach ($datas as $item) {
+	// 		$temp = $this->_gen_user_info($item);
+	// 		$arr1 = array($temp['userid'] => $temp);
+	// 		$arrs = array_merge($arrs, $arr1);
+	// 	}
+	// 	return $arrs;
+	// }
+
+
+
 }
 
 /* End of file user.php */

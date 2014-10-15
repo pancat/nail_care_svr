@@ -134,7 +134,7 @@
  	 * @return  boolean 	true 	插入数据成功
  	 * 			boolean 	false 	失败
  	 */
- 	function delete_entry($comment_id)
+ 	function delete_entry($arr)
  	{
  		$this->db->delete(self::TABLE_NAME, $arr);
  		log_message('debug', $this->db->last_query().'; comment_id: '.$this->db->insert_id().'; affected_rows: '.$this->db->affected_rows());

@@ -58,8 +58,8 @@ $config['m_name'] 			= 'm_name';
 /**
  * 圈子评论 外部接口字段名
  */
-$config['comment_id']		= 'comment_id';
-$config['comment_cid']		= 'comment_cid';
-$config['comment_uid']		= 'comment_uid';
-$config['comments']			= 'comments';
-$config['comment_cre_date']	= 'comment_cre_date';
+// $config['comment_id']		= 'comment_id';
+// $config['comment_cid']		= 'comment_cid';
+// $config['comment_uid']		= 'comment_uid';
+// $config['comments']			= 'comments';
+// $config['comment_cre_date']	= 'comment_cre_date';
