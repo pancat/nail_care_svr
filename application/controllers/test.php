@@ -4,7 +4,7 @@
  * User controller
  * A class test the model and other functions
  * Created on 2014/9/26
- * @author fanz <2513273451@qq.com>
+ * @author fanz <251327341@qq.com>
  * @version 0.1
  * @copyright Pancat
  */
@@ -17,7 +17,7 @@ class Test extends CI_Controller {
 		// $this->load->library('session');
 		$this->load->model('user_model','user');
 		$this->load->helper('form');
-		$this->db_fields = $this->user->get_fields();
+		// $this->db_fields = $this->user->get_fields();
 	}
 
 
@@ -109,10 +109,15 @@ class Test extends CI_Controller {
               'size'        => '50',
               'style'       => 'width:50%',
             );
-		// $data = array_chunk($arr1, 2, true);
-		// print_r($data[1]);
-
+		$arr2 = array(
+              'name'        => 'sessionid',
+              'id'          => 'sessionid',
+              'maxlength'   => '100',
+              'size'        => '50',
+              'style'       => 'width:50%',
+            );
 		$data['form_input'] = form_input($arr1);
+		$data['form_session'] = form_input($arr2);
 		$data['form_submit'] = form_submit('submit','submit');
 		$this->load->view('test/userinfo',$data);
 	}

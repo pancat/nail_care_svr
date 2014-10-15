@@ -27,7 +27,7 @@ class Product extends CI_Controller {
 		parent::__construct();
 		$this->load->model('product_model');
 		$this->load->helper('date');
-		$this->db_fields = $this->product_model->get_fields();
+		// $this->db_fields = $this->product_model->get_fields();
 	}
 
 	public function index()

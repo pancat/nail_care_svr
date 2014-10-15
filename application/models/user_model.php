@@ -4,7 +4,7 @@
  * User Model
  * A class provided some methods to CURD data in talbe fr_user
  * Created on 2014/9/25
- * @author fanz <2513273451@qq.com> 
+ * @author fanz <251327341@qq.com> 
  * @version 0.1
  * @copyright Pancat
  */
@@ -16,30 +16,25 @@
  	 * 表名
  	 * @var string
  	 */
- 	protected $table_name = 'user';
+ 	const TABLE_NAME 		= 'user';
 
- 	const TABLE_NAME = 'user';
- 	/**
- 	 * 表字段的名称
- 	 * @var array
- 	 */
- 	protected $fields = array(
- 						'user_id'			=> 'id'	,			//int 主键 id
- 						'user_name'			=> 'user_name',		//string 登录用户名
- 						'psd'				=> 'password',		//string 登录密码
- 						'nick_name'			=> 'nick_name',		//string 昵称
- 						'age'				=> 'age',			//int 年龄
- 						'email'				=> 'email',			//string 邮箱
- 						'address'			=> 'address',		//string 地址
- 						'avatar_uri'		=> 'avatar_uri',	//string 头像uri
- 						'register_date'		=> 'register_date', //string 注册时间
- 						'last_login'		=> 'last_login', 	//string 最近登录时间
- 						'last_ip'			=> 'last_ip',		//string 最近登录ip
- 						'status'			=> 'status',		//int 状态：1（正常），0（冻结），-1（删除）
- 						'level'				=> 'level',			//int 等级：1（普通用户）...
- 						'remark'			=> 'remark'			//string 备注
- 						);
- 	
+
+ 	const ID 		 		= 'id';
+ 	const USER_NAME 		= 'user_name';
+ 	const PSD 				= 'password';
+ 	const NICK_NAME 		= 'nick_name';
+ 	const AGE 				= 'age';
+ 	const EMAIL 		 	= 'email';
+	const ADDR 		 		= 'address';
+ 	const AVATAR_URI 		= 'avatar_uri';
+ 	const REGISTER_DATE 	= 'register_date';
+ 	const LAST_LOGIN 		= 'last_login';
+ 	const TYPE 				= 'type';
+ 	const STATUS 			= 'status';
+ 	const LEVEL 			= 'level';
+ 	const REMARK 			= 'remark';
+
+
  	/**
  	 * 软删除，仅修改字段status为“被删除”状态。
  	 * @var bool
@@ -53,11 +48,16 @@
  	}
 
  	/**
- 	 * 获取user表的字段名称
+ 	 * 设置为绝对删除
  	 */
- 	function get_fields()
+ 	function set_absolute_delete()
  	{
- 		return $this->fields;
+ 		$this->soft_delete = FALSE;
+ 	}
+
+ 	function set_soft_delete()
+ 	{
+ 		$this->soft_delete = TRUE;
  	}
 
  	/**
@@ -71,7 +71,7 @@
  	 */
  	function get_user_by_np($arr)
  	{
- 		$res = $this->db->where($arr)->get($this->table_name);
+ 		$res = $this->db->where($arr)->get(self::TABLE_NAME);
  		if($res->num_rows() >= 1)
  			return $res->row_array();
  		else
@@ -88,7 +88,7 @@
  	 */
  	function get_user_by_uname($arr)
  	{
- 		$res = $this->db->where($arr)->get($this->table_name);
+ 		$res = $this->db->where($arr)->get(self::TABLE_NAME);
  		log_message('debug', $this->db->last_query());
  		if($res->num_rows() >= 1)
  			return $res->row_array();
@@ -106,7 +106,7 @@
  	 */
  	function get_user_by_id($arr)
  	{
- 		$res = $this->db->where($arr)->get($this->table_name);
+ 		$res = $this->db->where($arr)->get(self::TABLE_NAME);
  		log_message('debug', $this->db->last_query());
  		if($res->num_rows() >= 1)
  			return $res->row_array();
@@ -118,7 +118,7 @@
  	// just for test
  	function get_all_users()
  	{
- 		return $this->db->get($this->table_name)->result();
+ 		return $this->db->get(self::TABLE_NAME)->result();
  	}
 
  	/**
@@ -133,7 +133,7 @@
  	 */
  	function insert_entry($arr)
  	{
- 		$this->db->insert($this->table_name, $arr);
+ 		$this->db->insert(self::TABLE_NAME, $arr);
  		log_message('debug', $this->db->last_query().'; user_id: '.$this->db->insert_id().'; affected_rows: '.$this->db->affected_rows());
  		if($this->db->affected_rows() > 0)
  			return TRUE;
@@ -157,8 +157,8 @@
  	 */
  	function update_entry($id, $arr)
  	{
- 		$this->db->where($this->fields['user_id'],$id);
- 		$this->db->update($this->table_name, $arr);
+ 		$this->db->where(self::ID,$id);
+ 		$this->db->update(self::TABLE_NAME, $arr);
  		if($this->db->affected_rows() > 0)
  			return TRUE;
  		else 
@@ -174,15 +174,15 @@
  	function update_login($id)
  	{
  		$arr = array(
- 				$this->fields['last_login']=>now(),
- 				$this->fields['last_ip']=>$this->input->ip_address
+ 				self::LAST_LOGIN=>now(),
+ 				self::LAST_IP=>$this->input->ip_address
  				);
- 		$this->db->where($this->fields['user_id']);
- 		$this->db->update($this->fields['user_id'], $id);
+ 		$this->db->where(self::ID);
+ 		$this->db->update(self::ID, $id);
  		if($this->db->affected_rows() > 0)
- 			log_message('info','user '.$id.' login success with ip address: '.$arr[$this->fields['last_ip']]);
+ 			log_message('info','user '.$id.' login success with ip address: '.$arr[self::LAST_IP]);
  		else
- 			log_message('error','user '.$id.' login success but update uncorrect with ip address: '.$arr[$this->fields['last_ip']]);
+ 			log_message('error','user '.$id.' login success but update uncorrect with ip address: '.$arr[self::LAST_IP]);
  	}
 
  }

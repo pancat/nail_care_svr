@@ -26,33 +26,33 @@ $config['m_id'] 			= 'm_id';
 $config['m_name'] 			= 'm_name';
 
 
-/**
- * 用户
- */
-$config['u_id'] 			= 'u_id';
-$config['u_nickname'] 		= 'u_nickname';
-$config['u_type'] 			= 'u_type';
-$config['u_status'] 		= 'u_status';
+// /**
+//  * 用户
+//  */
+// $config['u_id'] 			= 'u_id';
+// $config['u_nickname'] 		= 'u_nickname';
+// $config['u_type'] 			= 'u_type';
+// $config['u_status'] 		= 'u_status';
 
-/**
- * 产品模块外部接口字段名($value是外部接口的字段名称)
- */
-$config['product_id'] 		= 'p_id';
-$config['product_name'] 	= 'name';
-$config['product_describe'] = 'p_describe';
-$config['product_hit'] 		= 'hit';
-$config['product_cre_date']	= 'cre_date';
-$config['product_image']	= 'image_uri';
+// /**
+//  * 产品模块外部接口字段名($value是外部接口的字段名称)
+//  */
+// $config['product_id'] 		= 'p_id';
+// $config['product_name'] 	= 'name';
+// $config['product_describe'] = 'p_describe';
+// $config['product_hit'] 		= 'hit';
+// $config['product_cre_date']	= 'cre_date';
+// $config['product_image']	= 'image_uri';
 
 /**
  * 圈子模块外部接口字段名
  */
-$config['circle_id']		= 'cricle_id';
-$config['circle_title']		= 'title';
-$config['circle_content']	= 'content';
-$config['circle_hit'] 		= 'hit';
-$config['circle_cre_date']	= 'cre_date';
-$config['circle_image']		= 'image_uri';
+// $config['circle_id']		= 'cricle_id';
+// $config['circle_title']		= 'title';
+// $config['circle_content']	= 'content';
+// $config['circle_hit'] 		= 'hit';
+// $config['circle_cre_date']	= 'cre_date';
+// $config['circle_image']		= 'image_uri';
 
 
 /**

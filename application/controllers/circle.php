@@ -10,7 +10,7 @@
  */
 class Circle extends CI_Controller {
 
-	protected $db_fields;
+	// protected $db_fields;
 
 
 
@@ -18,7 +18,7 @@ class Circle extends CI_Controller {
 		parent::__construct();
 		$this->load->model('circle_model');
 		$this->load->helper('date');
-		$this->db_fields = $this->circle_model->get_fields();
+		// $this->db_fields = $this->circle_model->get_fields();
 	}
 
 

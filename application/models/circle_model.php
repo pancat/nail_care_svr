@@ -16,17 +16,30 @@
  	 * 表名
  	 * @var string
  	 */
- 	protected $table_name = 'fr_circle';
- 	protected $image_table = 'fr_circle_image'; 			// error 待修改
- 	protected $user_table = 'fr_user';
- 	protected $comment_table = 'fr_circle_comment';
+ 	// protected $table_name = 'fr_circle';
+ 	// protected $image_table = 'fr_circle_image'; 			// error 待修改
+ 	// protected $user_table = 'fr_user';
+ 	// protected $comment_table = 'fr_circle_comment';
  	// protected $product_label = "fr_product_label";
+
+ 	const TABLE_NAME 		= 'fr_circle';
+ 	const IMAGE_TABLE 		= 'fr_circle_image';
+ 	const USER_TABLE 		= 'fr_user';
+ 	const COMMENT_TABLE 	= 'fr_circle_comment';
 
 
  	/**
  	 * 表字段的名称(上面表中的字段名称)
  	 * @var array
  	 */
+
+ 	const ID       = 'id';
+ 	const TITLE    = 'title';
+ 	const CONTENT  = 'content';
+ 	const CRE_DATE = 'cre_date';
+ 	const HIT      = 'hit';
+ 	const UID      = 'uid';
+
  	protected $fields = array(
  						// 表 $table_name
  						'circle_id'			=> 'id'	,			//int 主键 圈子id
@@ -64,15 +77,24 @@
  	function __construct() 
  	{
  		parent::__construct();
+ 		$this->load->model('user_model');
+ 		$this->load->model('circle_comment_model');
+ 		$this->load->model('circle_image_model');
+ 		$this->load->library('IUser');
+ 		$this->load->library('ICircle');
+ 		$this->load->library('ICirComment');
+		$this->load->library('ICirImage');
+ 		// $this->load->library('IUser');
+
  	}
 
  	/**
  	 * 获取circle表及其相关表的字段名称
  	 */
- 	function get_fields()
- 	{
- 		return $this->fields;
- 	}
+ 	// function get_fields()
+ 	// {
+ 	// 	return $this->fields;
+ 	// }
 
  	/**
  	 * Get circle list 
@@ -85,32 +107,32 @@
  	 */
  	function get_circle_list($offset = 0, $limit = 10, $order_by = "", $order = "desc")
  	{
- 		$select = $this->table_name.'.'.$this->fields['circle_id'].' as '.$this->config->item('circle_id').', '.
- 					$this->table_name.'.'.$this->fields['circle_title'].' as '.$this->config->item('circle_title').', '.
- 					$this->table_name.'.'.$this->fields['circle_content'].' as '.$this->config->item('circle_content').', '.
- 					$this->table_name.'.'.$this->fields['circle_cre_date'].' as '.$this->config->item('circle_cre_date').', '.
- 					$this->table_name.'.'.$this->fields['circle_hit'].' as '.$this->config->item('circle_hit').', '.
- 					$this->image_table.'.'.$this->fields['user_id'].' as '.$this->config->item('u_id').', '.
- 					$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('circle_image').', '.
- 					$this->user_table.'.'.$this->fields['user_nickname'].' as '.$this->config->item('u_nickname')
+ 		$select = self::TABLE_NAME.'.'.self::ID.' as '.ICircle::ID.', '.
+ 					self::TABLE_NAME.'.'.self::TITLE.' as '.ICircle::TITLE.', '.
+ 					self::TABLE_NAME.'.'.self::CONTENT.' as '.ICircle::CONTENT.', '.
+ 					self::TABLE_NAME.'.'.self::CRE_DATE.' as '.ICircle::CRE_DATE.', '.
+ 					self::TABLE_NAME.'.'.self::HIT.' as '.ICircle::HIT.', '.
+ 					self::IMAGE_TABLE.'.'.user_model::ID.' as '.IUser::ID.', '.
+ 					self::IMAGE_TABLE.'.'.circle_image_model::URI.' as '.ICircle::IMAGE.', '.
+ 					self::USER_TABLE.'.'.user_model::NICK_NAME.' as '.IUser::NICK_NAME
  					;
  		// 'circle.id as id, circle.name as name, image.uri as image_uri'
  		$this->db->select($select);
- 		$this->db->from($this->table_name);
- 		$this->db->join($this->image_table, 
- 				$this->image_table.'.'.$this->fields['image_cid'].' = '.$this->table_name.'.'.$this->fields['circle_id']
- 				.' and '.$this->image_table.'.'.$this->fields['image_order'].' = 0 ', 'left'
+ 		$this->db->from(self::TABLE_NAME);
+ 		$this->db->join(self::IMAGE_TABLE, 
+ 				self::IMAGE_TABLE.'.'.circle_image_model::CID.' = '.self::TABLE_NAME.'.'.self::ID
+ 				.' and '.self::IMAGE_TABLE.'.'.circle_image_model::ORDER.' = 0 ', 'left'
  				);
- 		$this->db->join($this->user_table, 
- 				$this->table_name.'.'.$this->fields['circle_uid'].' = '.$this->user_table.'.'.$this->fields['user_id']
- 				.' and '.$this->user_table.'.'.$this->fields['user_status'].' = 1 ', 'left'
+ 		$this->db->join(self::USER_TABLE, 
+ 				self::TABLE_NAME.'.'.self::UID.' = '.self::USER_TABLE.'.'.user_model::ID
+ 				.' and '.self::USER_TABLE.'.'.user_model::STATUS.' = 1 ', 'left'
  				);
  		$this->db->limit($limit,$offset);
- 		if($order_by != "" && $this->db->field_exists($order_by, $this->table_name))
+ 		if($order_by != "" && $this->db->field_exists($order_by, self::TABLE_NAME))
  			$this->db->order_by($order_by, $order);
  		else {
- 			if(!$this->db->field_exists($order_by, $this->table_name))
- 				log_message('debug', 'The field : '.$order_by.' is not exists in table '.$this->table_name);
+ 			if(!$this->db->field_exists($order_by, self::TABLE_NAME))
+ 				log_message('debug', 'The field : '.$order_by.' is not exists in table '.self::TABLE_NAME);
  		}
 
  		$res = $this->db->get();
@@ -132,23 +154,23 @@
  	 */
  	function get_circle_info($circle_id = 0)
  	{
- 		$select = $this->table_name.'.'.$this->fields['circle_id'].' as '.$this->config->item('circle_id').', '.
- 					$this->table_name.'.'.$this->fields['circle_title'].' as '.$this->config->item('circle_title').', '.
- 					$this->table_name.'.'.$this->fields['circle_content'].' as '.$this->config->item('circle_content').', '.
- 					$this->table_name.'.'.$this->fields['circle_cre_date'].' as '.$this->config->item('circle_cre_date').', '.
- 					$this->table_name.'.'.$this->fields['circle_hit'].' as '.$this->config->item('circle_hit').', '.
- 					$this->user_table.'.'.$this->fields['user_nickname'].' as '.$this->config->item('u_nickname')
+ 		$select = self::TABLE_NAME.'.'.self::ID.' as '.ICircle::ID.', '.
+ 					self::TABLE_NAME.'.'.self::TITLE.' as '.ICircle::TITLE.', '.
+ 					self::TABLE_NAME.'.'.self::CONTENT.' as '.ICircle::CONTENT.', '.
+ 					self::TABLE_NAME.'.'.self::CRE_DATE.' as '.ICircle::CRE_DATE.', '.
+ 					self::TABLE_NAME.'.'.self::HIT.' as '.ICircle::HIT.', '.
+ 					self::USER_TABLE.'.'.user_model::NICK_NAME.' as '.IUser::NICK_NAME
  					;
  		$this->db->select($select);
- 		$this->db->from($this->table_name);
- 		$this->db->where($this->table_name.'.'.$this->fields['circle_id'].' = '.$circle_id);
- 		$this->db->join($this->image_table, 
- 				$this->image_table.'.'.$this->fields['image_cid'].' = '.$this->table_name.'.'.$this->fields['circle_id']
+ 		$this->db->from(self::TABLE_NAME);
+ 		$this->db->where(self::TABLE_NAME.'.'.self::ID.' = '.$circle_id);
+ 		$this->db->join(self::IMAGE_TABLE, 
+ 				self::IMAGE_TABLE.'.'.circle_image_model::CID.' = '.self::TABLE_NAME.'.'.self::ID
  				, 'left'
  				);
- 		$this->db->join($this->user_table, 
- 				$this->table_name.'.'.$this->fields['circle_uid'].' = '.$this->user_table.'.'.$this->fields['user_id']
- 				.' and '.$this->user_table.'.'.$this->fields['user_status'].' = 1 ', 'left'
+ 		$this->db->join(self::USER_TABLE, 
+ 				self::TABLE_NAME.'.'.self::UID.' = '.self::USER_TABLE.'.'.user_model::ID
+ 				.' and '.self::USER_TABLE.'.'.user_model::STATUS.' = 1 ', 'left'
  				);
  		$res = $this->db->get();
  		if($res->num_rows() >= 1)
@@ -170,10 +192,10 @@
  	function get_circle_images($circle_id = 0)
  	{
  		$select = 
- 			$this->image_table.'.'.$this->fields['image_uri'].' as '.$this->config->item('circle_image');
+ 			self::IMAGE_TABLE.'.'.circle_image_model::URI.' as '.ICircle::IMAGE;
  		$this->db->select($select);
- 		$this->db->from($this->image_table);
- 		$this->db->where($this->image_table.'.'.$this->fields['image_cid'].' = '.$circle_id);
+ 		$this->db->from(self::IMAGE_TABLE);
+ 		$this->db->where(self::IMAGE_TABLE.'.'.circle_image_model::CID.' = '.$circle_id);
  		$res = $this->db->get();
  		if($res->num_rows() >= 1)
  			return $res->result_array();

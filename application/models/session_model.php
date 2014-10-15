@@ -4,7 +4,7 @@
  * Session Model
  * A class provided some methods to CURD data in talbe fr_session
  * Created on 2014/10/14
- * @author fanz <2513273451@qq.com> 
+ * @author fanz <251327341@qq.com> 
  * @version 0.1
  * @copyright Pancat
  */
