@@ -5,7 +5,7 @@
 #title{ padding:10px;font-size:40px;}
 #header_right_bottom{position:absolute;right:30px;top:60px;;}
 #resourcearea{width:100%;}
-.box{width:49%;border-bottom:2px solid blue;align:center;height:140px;}
+.box{width:49%;border-bottom:2px solid blue;align:center;height:auto;}
 .evenbox{float:left; border-right:2px solid green;}
 .oddbox{float:right;}
 .twodimleft{float:left;}
