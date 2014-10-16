@@ -38,6 +38,7 @@ class User extends CI_Controller {
 	const SESSION_UID 		= 'uid';
 	const SESSION_DATE 		= 'last_date'; 
 
+	public $sessionid = '123';
 
 	function __construct() {
 		parent::__construct();
@@ -62,8 +63,12 @@ class User extends CI_Controller {
 	 * @access public
 	 * @todo delete test code
 	 */
+	// public function login() {
+	// 	echo 'loogin'.$this->sessionid;
+	// }
+
+	
 	public function login() {	
-		
 		$res = array(
 				IUser::RES_CODE 		=> '0',
 				self::SESSION_ID	=>	''
@@ -87,15 +92,15 @@ class User extends CI_Controller {
 	 			$lastip = $this->input->ip_address();
 
 	 			
-				$sessionid = '';
-	 			$is_login = $this->_doAuthUser(& $sessionid, $data[IUser::ID]);
-	 			
+				
+	 			$is_login = $this->_doAuthUser('', $data[IUser::ID]);
 	 			$session_data = array(
-	 					self::SESSION_ID => $sessionid,
+	 					self::SESSION_ID => $this->sessionid,
 	 					self::SESSION_UID => $data[IUser::ID],
 	 					self::SESSION_DATE => $logtime,
 						);
 
+				$res[IUser::RES_CODE] = '12'.$is_login;
 	 			$this->load->model('session_model');
 	 			if(!$is_login) {
 	 				$this->session_model->insert_userdata($session_data);
@@ -103,20 +108,18 @@ class User extends CI_Controller {
 	 			else
 	 				$this->session_model->update_userdata($session_data);
 
-				$_SESSION['$sessionid'] = $sessionid;
-	 			
-	 			// $_SESSION['is_login'] = True;
+				// $_SESSION['$sessionid'] = $this->sessionid;	//
+				// $_SESSION['is_login'] = True;
 				$res[IUser::RES_CODE] = '1';
-				// set token
-				$res['sessionid'] = $sessionid;
-				$res = array_merge($res,$data);
+				$res['sessionid'] = $this->sessionid;
+				$res = array_merge($res,$data); 
 			}
 			else {
 				$res[IUser::RES_CODE] = '102';
 			}
 		}
 
-		header($this->config->item("header_json_utf8")); 
+		// header($this->config->item("header_json_utf8")); 
 		echo json_encode($res);
 
 		//for test
@@ -210,7 +213,7 @@ class User extends CI_Controller {
 	 */
 	function get_user_info() {
 		$res = array( IUser::RES_CODE => '0' );
-		$sessionid = $this->input->post( self::SESSION_ID, 0);
+		$sessionid = $this->input->post( self::SESSION_ID, '');
 		$uid = $this->input->post( IUser::ID, 0);
 		if($this->_doAuthUser($sessionid, $uid) != TRUE) {
 			$res[IUser::RES_CODE] = '101';
@@ -239,7 +242,6 @@ class User extends CI_Controller {
 
 
 	function add_circle() {
-
 		$res = array( IUser::RES_CODE => '1');
 		$id = $this->input->post('id');
 		$session_id = $this->input->post('sessionid');
@@ -374,18 +376,24 @@ class User extends CI_Controller {
 	 * @access private
 	 */
 	private function _doAuthUser($sessionid = '', $user_id = '') {
-		session_start();
-		$sessionid = session_id();
-		if($user_id == '')
+
+		if($user_id == '') 
 			return FALSE;
-		// session_id($sessionid);
-		// session_start();
+		if($sessionid == '') {
+			session_start();
+			$this->sessionid = session_id();
+		}
+		else {
+			$this->sessionid = $sessionid;
+			session_id($this->sessionid);
+			session_start();
+		}
 		if(!isset($_SESSION[self::SESSION_UID]) || !$_SESSION[self::SESSION_UID] == $user_id)
 			$_SESSION[self::SESSION_UID] = $user_id;
 
 		$this->load->model('session_model');
 		$res = $this->session_model->is_login( array(
-								session_model::SESSION_ID => $sessionid,
+								session_model::SESSION_ID => $this->sessionid,
 								session_model::USER_ID    => $user_id
 							));
 		return $res;
