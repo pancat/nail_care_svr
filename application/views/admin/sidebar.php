@@ -1,4 +1,4 @@
-<div class="sidebar-nav">
+<div class="sidebar-nav"  id="myAffix">
     <ul>
         <li>
             <a  data-target=".dashboard-menu" class="nav-header" data-toggle="collapse"> <i class="fa fa-fw fa-dashboard"></i>
@@ -56,6 +56,7 @@
                         个人信息模块
                     </a>
                 </li>
+
                 <li >
                     <a href="<?php echo site_url('admin/admin_dev/show_tcircle') ?>">
                         <span class="fa fa-caret-right"></span>
@@ -96,3 +97,13 @@
         </li>
     </ul>
 </div>
+
+<script src="assets/js/common/stickUp.min.js"></script>
+    <script type="text/javascript">
+              //initiating jQuery
+              $(function($) {
+                $(document).ready( function() {
+                    $('#myAffix').stickUp();
+                });
+              });
+    </script>

@@ -5,6 +5,7 @@ class ICircle {
 	 * 外部接口字段名
 	 */
 	const ID       = 'cricle_id';
+	const UID      = 'uid';
 	const TITLE    = 'title';
 	const CONTENT  = 'content';
 	const HIT      = 'hit';

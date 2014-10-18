@@ -99,6 +99,7 @@
  				log_message('debug', 'The field : '.$order_by.' is not exists in table '.self::TABLE_NAME);
  		}
  		$res = $this->db->get();
+ 		log_message('debug', $this->db->last_query());
  		if($res->num_rows() >= 1)
  			return $res->result_array();
  		else

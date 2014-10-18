@@ -135,64 +135,46 @@
                         <td>string{'1', '101', '102', '103'}</td>
                         <td>操作结果。{'1':成功, '101':格式验证失败，用户名或密码格式不合法,'102':用户名或密码错误</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>sessionid</td>
                         <td>string</td>
                         <td>sessionid，验证用户的凭证。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>username</td>
                         <td>string</td>
                         <td>用户名。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>nick_name</td>
                         <td>string</td>
                         <td>用户昵称。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>age</td>
                         <td>integer</td>
                         <td>年龄。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>status</td>
                         <td>integer</td>
                         <td>用户。{1：正常，0：已冻结}</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>email</td>
                         <td>string</td>
                         <td>邮箱。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>level</td>
                         <td>int</td>
                         <td>用户类型。{1：普通用户}</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>avatar_uri</td>
                         <td>string</td>
                         <td>头像图片地址。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>address</td>
                         <td>string</td>
@@ -326,64 +308,46 @@
                         <td>string{'1', '101', '102', '103'}</td>
                         <td>操作结果。{'1':成功, '101':验证失败，用户名密码组合不合法,'102':用户名已注册, '103':用户注册失败，服务器或数据库故障}</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>id</td>
                         <td>int</td>
                         <td>用户id。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>username</td>
                         <td>string</td>
                         <td>用户名。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>nick_name</td>
                         <td>string</td>
                         <td>用户昵称。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>age</td>
                         <td>integer</td>
                         <td>年龄。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>status</td>
                         <td>integer</td>
                         <td>用户。{1：正常，0：已冻结}</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>email</td>
                         <td>string</td>
                         <td>邮箱。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>level</td>
                         <td>int</td>
                         <td>用户类型。{1：普通用户}</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>avatar_uri</td>
                         <td>string</td>
                         <td>头像图片地址。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>address</td>
                         <td>string</td>
@@ -517,64 +481,46 @@
                         <td>string{'1', '101', '102', '103'}</td>
                         <td>操作结果。{'1':成功, '101':用户名身份验证失败,'102':获取用户信息失败}</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>id</td>
                         <td>int</td>
                         <td>用户id。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>username</td>
                         <td>string</td>
                         <td>用户名。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>nick_name</td>
                         <td>string</td>
                         <td>用户昵称。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>age</td>
                         <td>integer</td>
                         <td>年龄。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>status</td>
                         <td>integer</td>
                         <td>用户。{1：正常，0：已冻结}</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>email</td>
                         <td>string</td>
                         <td>邮箱。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>level</td>
                         <td>int</td>
                         <td>用户类型。{1：普通用户}</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>avatar_uri</td>
                         <td>string</td>
                         <td>头像图片地址。</td>
                       </tr>
-                    </tbody>
-                    <tbody>
                       <tr>
                         <td>address</td>
                         <td>string</td>
@@ -611,6 +557,12 @@
             </div>
             </div>
 
+            <div class="back-to-top pull-right">
+              <a href="<?php echo site_url('admin/admin_dev/show_tcircle'); ?>#top">
+                回到顶部
+              </a>
+            </div>
+            
             </div>
 
         </div>
@@ -684,6 +636,5 @@ $(document).ready(function(){
       $("#userinfo1_result").html(formated);
     });
   });
-  
 });
 </script>
