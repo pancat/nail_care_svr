@@ -26,8 +26,11 @@ class Admin_dev extends CI_Controller {
 	const NAVBAR_MAIN = 'admin/navbar_main';
 	const SIDEBAR = 'admin/sidebar';
 	const MAIN = 'admin/main';
-	const FOOTER = 'admin/footer';
+	const FOOTER = 'admin/footer';	
 
+	const TUSER = 'admin/tuser';
+	const TCIRCLE = 'admin/tcircle';
+	const TPRODUCT = 'admin/tproduct';
 
 	const USER_NAME = 'username';
 	const PSD 		= 'psd';
@@ -124,6 +127,30 @@ class Admin_dev extends CI_Controller {
 		$this->load->view(self::MAIN);
 		$this->load->view(self::FOOTER);
 	}
+
+	function show_tuser($data = array()) {
+		$this->load->view(self::HEAD);
+		$this->load->view(self::NAVBAR_MAIN);
+		$this->load->view(self::SIDEBAR);
+		$this->load->view(self::TUSER);
+		$this->load->view(self::FOOTER);
+	}
+
+	function show_tcircle($data = array()) {
+		$this->load->view(self::HEAD);
+		$this->load->view(self::NAVBAR_MAIN);
+		$this->load->view(self::SIDEBAR);
+		$this->load->view(self::TCIRCLE);
+		$this->load->view(self::FOOTER);
+	}
+
+	function show_tproduct($data = array()) {
+		$this->load->view(self::HEAD);
+		$this->load->view(self::NAVBAR_MAIN);
+		$this->load->view(self::SIDEBAR);
+		$this->load->view(self::TPRODUCT);
+		$this->load->view(self::FOOTER);
+	}
 	
 
 	/**
@@ -137,6 +164,9 @@ class Admin_dev extends CI_Controller {
 		$this->form_validation->set_rules(self::USER_NAME, '用户名', 'trim|required|is_natural|min_length[1]|xss_clean');
 		$this->form_validation->set_rules(self::PSD, '密码', 'trim|required|md5');
 	}
+
+
+
 }
 
 /* End of file admin_dev.php */

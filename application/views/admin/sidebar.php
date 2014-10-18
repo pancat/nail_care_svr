@@ -2,11 +2,11 @@
     <ul>
         <li>
             <a  data-target=".dashboard-menu" class="nav-header" data-toggle="collapse"> <i class="fa fa-fw fa-dashboard"></i>
-                Dashboard <i class="fa fa-collapse"></i>
+                主页面 <i class="fa fa-collapse"></i>
             </a>
         </li>
         <li>
-            <ul class="dashboard-menu nav nav-list collapse in">
+            <ul class="dashboard-menu nav nav-list collapse">
                 <li>
                     <a href="index.html">
                         <span class="fa fa-caret-right"></span>
@@ -44,27 +44,28 @@
             <a  data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse">
                 <i class="fa fa-fw fa-briefcase"></i>
                 接口测试
-                <span class="label label-info">+3</span>
+                <i class="fa fa-collapse"></i>
+                <!-- <span class="label label-info">+3</span> -->
             </a>
         </li>
         <li>
-            <ul class="accounts-menu nav nav-list collapse">
+            <ul class="accounts-menu nav nav-list collapse in">
                 <li >
-                    <a href="sign-in.html">
+                    <a href="<?php echo site_url('admin/admin_dev/show_tuser') ?>">
                         <span class="fa fa-caret-right"></span>
-                        Sign In
+                        个人信息模块
                     </a>
                 </li>
                 <li >
-                    <a href="sign-up.html">
+                    <a href="<?php echo site_url('admin/admin_dev/show_tcircle') ?>">
                         <span class="fa fa-caret-right"></span>
-                        Sign Up
+                        圈子模块
                     </a>
                 </li>
                 <li >
-                    <a href="reset-password.html">
+                    <a href="<?php echo site_url('admin/admin_dev/show_tproduct') ?>">
                         <span class="fa fa-caret-right"></span>
-                        Reset Password
+                        产品模块
                     </a>
                 </li>
             </ul>

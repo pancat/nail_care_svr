@@ -2,8 +2,8 @@
                 <hr>
 
                 <!-- Purchase a site license to remove this link from the footer: http://www.portnine.com/bootstrap-themes -->
-                <p class="pull-right">A <a href="#" target="_blank">Fanrong background</a> by <a href="http://www.portnine.com" target="_blank">Portnine</a></p>
-                <p>© 2014 <a href="#" target="_blank"><?php $this->config->item('author'); ?></a></p>
+                <!-- <p class="pull-right">A <a href="#" target="_blank">Fanrong background</a> by <a href="http://www.portnine.com" target="_blank">Portnine</a></p>-->
+                <p class="pull-right">© 2014 <a href="#" target="_blank"><?php $this->config->item('author'); ?></a></p>
             </footer>
         </div>
     </div>
