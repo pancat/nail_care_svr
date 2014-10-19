@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2014 年 10 月 15 日 22:08
+-- 生成日期: 2014 年 10 月 19 日 09:45
 -- 服务器版本: 5.1.33
 -- PHP 版本: 5.2.9-2
 
@@ -12,6 +12,29 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 -- 数据库: `fanrong`
 --
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `fr_admin`
+--
+
+CREATE TABLE IF NOT EXISTS `fr_admin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_name` char(40) NOT NULL,
+  `nick_name` char(20) NOT NULL,
+  `psd` char(32) NOT NULL,
+  `level` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_name` (`user_name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+--
+-- 导出表中的数据 `fr_admin`
+--
+
+INSERT INTO `fr_admin` (`id`, `user_name`, `nick_name`, `psd`, `level`) VALUES
+(1, '123', '', '202cb962ac59075b964b07152d234b70', 0);
 
 -- --------------------------------------------------------
 
@@ -50,14 +73,15 @@ CREATE TABLE IF NOT EXISTS `fr_circle` (
   `hit` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=20 ;
 
 --
 -- 导出表中的数据 `fr_circle`
 --
 
 INSERT INTO `fr_circle` (`id`, `uid`, `title`, `content`, `thumb_image`, `cre_date`, `type`, `hit`) VALUES
-(1, 123, '十款轻熟女美甲图片 甜美清新不夸张', '这款美甲用不规则的图案表现出个性，大胆的撞色却不会有违和感，而且带着一丝俏皮可爱。如果你也是这张个性的女生，可不要错过这款美甲。', '', '0000-00-00 00:00:00', 1, 0);
+(1, 123, '十款轻熟女美甲图片 甜美清新不夸张', '这款美甲用不规则的图案表现出个性，大胆的撞色却不会有违和感，而且带着一丝俏皮可爱。如果你也是这张个性的女生，可不要错过这款美甲。', '', '0000-00-00 00:00:00', 1, 0),
+(19, 1, '0', '0', 'http://localhost/nail_care_svr/assets/res/circle_images20141015222814149.png', '2014-10-15 22:28:14', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -74,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `fr_circle_comment` (
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11 ;
 
 --
 -- 导出表中的数据 `fr_circle_comment`
@@ -83,7 +107,12 @@ CREATE TABLE IF NOT EXISTS `fr_circle_comment` (
 INSERT INTO `fr_circle_comment` (`id`, `cid`, `uid`, `comments`, `cre_date`) VALUES
 (1, 1, 10, '这个不错啊！！', '0000-00-00 00:00:00'),
 (2, 1, 10, '这个不错啊！！', '2014-10-10 10:50:15'),
-(4, 1, 9, 'GOOD！！', '2014-10-10 10:50:15');
+(4, 1, 9, 'GOOD！！', '2014-10-10 10:50:15'),
+(6, 1, 4, '测试', '2014-10-18 20:59:20'),
+(7, 1, 4, '测试', '2014-10-18 21:00:27'),
+(8, 1, 4, '测试', '2014-10-18 21:01:25'),
+(9, 1, 4, '测试21', '2014-10-18 21:01:49'),
+(10, 1, 4, '测试', '2014-10-18 21:52:34');
 
 -- --------------------------------------------------------
 
@@ -98,12 +127,14 @@ CREATE TABLE IF NOT EXISTS `fr_circle_image` (
   `order` smallint(6) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `c_id` (`cid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 --
 -- 导出表中的数据 `fr_circle_image`
 --
 
+INSERT INTO `fr_circle_image` (`id`, `uri`, `cid`, `order`) VALUES
+(7, 'http://localhost/nail_care_svr/assets/res/circle_images20141015222814149.png', 19, 1);
 
 -- --------------------------------------------------------
 
@@ -273,8 +304,10 @@ CREATE TABLE IF NOT EXISTS `fr_session` (
 --
 
 INSERT INTO `fr_session` (`sessionid`, `uid`, `last_date`) VALUES
-('e0g90g5c9nl4fbh8btub8dlc40', 4, '2014-10-15 17:34:37'),
-('e0g90g5c9nl4fbh8btub8dlc40', 7, '2014-10-15 12:48:06');
+('4c9f1vku7ek35rog3pd37osph2', 4, '2014-10-18 17:56:13'),
+('e0g90g5c9nl4fbh8btub8dlc40', 4, '2014-10-18 20:55:23'),
+('e0g90g5c9nl4fbh8btub8dlc40', 7, '2014-10-15 12:48:06'),
+('e0g90g5c9nl4fbh8btub8dlc40', 14, '2014-10-18 19:40:47');
 
 -- --------------------------------------------------------
 
@@ -301,7 +334,7 @@ CREATE TABLE IF NOT EXISTS `fr_user` (
   `remark` varchar(40) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_name` (`user_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户表' AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户表' AUTO_INCREMENT=16 ;
 
 --
 -- 导出表中的数据 `fr_user`
@@ -320,7 +353,8 @@ INSERT INTO `fr_user` (`id`, `user_name`, `nick_name`, `password`, `gender`, `ag
 (11, '555', '', '555', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
 (12, '888', '', '888', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
 (13, '567', '', '567', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
-(14, '000', '', '000', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL);
+(14, '000', '', '000', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL),
+(15, '3211', '', '123321', 1, 0, '', NULL, 'http://localhost/nail_care_svr/assets/res/images/avatar.jpg', '0000-00-00 00:00:00', NULL, NULL, 1, 1, 1, NULL);
 
 --
 -- 限制导出的表
