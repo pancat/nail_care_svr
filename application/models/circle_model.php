@@ -113,17 +113,13 @@
  					self::TABLE_NAME.'.'.self::CONTENT.' as '.ICircle::CONTENT.', '.
  					self::TABLE_NAME.'.'.self::CRE_DATE.' as '.ICircle::CRE_DATE.', '.
  					self::TABLE_NAME.'.'.self::HIT.' as '.ICircle::HIT.', '.
- 					self::IMAGE_TABLE.'.'.user_model::ID.' as '.IUser::ID.', '.
- 					self::IMAGE_TABLE.'.'.circle_image_model::URI.' as '.ICircle::IMAGE.', '.
+ 					self::TABLE_NAME.'.'.self::UID.' as '.ICircle::UID.', '.
+ 					self::TABLE_NAME.'.'.self::IMAGE.' as '.ICircle::IMAGE.', '.
  					self::USER_TABLE.'.'.user_model::NICK_NAME.' as '.IUser::NICK_NAME
  					;
  		// 'circle.id as id, circle.name as name, image.uri as image_uri'
  		$this->db->select($select);
  		$this->db->from(self::TABLE_NAME);
- 		$this->db->join(self::IMAGE_TABLE, 
- 				self::IMAGE_TABLE.'.'.circle_image_model::CID.' = '.self::TABLE_NAME.'.'.self::ID
- 				.' and '.self::IMAGE_TABLE.'.'.circle_image_model::ORDER.' = 0 ', 'left'
- 				);
  		$this->db->join(self::USER_TABLE, 
  				self::TABLE_NAME.'.'.self::UID.' = '.self::USER_TABLE.'.'.user_model::ID
  				.' and '.self::USER_TABLE.'.'.user_model::STATUS.' = 1 ', 'left'

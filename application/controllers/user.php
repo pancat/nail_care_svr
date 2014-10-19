@@ -100,7 +100,11 @@ class User extends CI_Controller {
 	 					self::SESSION_DATE => $logtime,
 						);
 
+<<<<<<< HEAD
 				$res[IUser::RES_CODE] = '12'.$is_login;
+=======
+				// $res[IUser::RES_CODE] = '12'.$is_login;
+>>>>>>> e11510e7c59384de2b313511d4fc8ae07cad49af
 	 			$this->load->model('session_model');
 	 			if(!$is_login) {
 	 				$this->session_model->insert_userdata($session_data);
@@ -115,6 +119,7 @@ class User extends CI_Controller {
 				$res = array_merge($res,$data); 
 			}
 			else {
+				//用户名与密码组合错误
 				$res[IUser::RES_CODE] = '102';
 			}
 		}
@@ -175,7 +180,7 @@ class User extends CI_Controller {
 				 user_model::USER_NAME 			=> 	$this->input->post(IUser::USER_NAME,'0'),
 				 user_model::PSD 				=>	$this->input->post(IUser::PSD,'0'),
 				 user_model::AVATAR_URI 		=>	base_url().'assets/res/images/avatar.jpg',
-				 user_model::REG_DATE 			=> 	$log_time
+				 user_model::REGISTER_DATE 		=> 	$log_time
 			);
 			// validate username 
 			if($this->user_model->get_user_by_uname(array_slice($arr, 0, 1)) != FALSE) {
@@ -198,7 +203,7 @@ class User extends CI_Controller {
 				}
 			}
 		}
-		header($this->config->item("header_json_utf8")); 
+		//header($this->config->item("header_json_utf8")); 
 		echo json_encode($res);
 	}
 
@@ -213,14 +218,11 @@ class User extends CI_Controller {
 	 */
 	function get_user_info() {
 		$res = array( IUser::RES_CODE => '0' );
-		$sessionid = $this->input->post( self::SESSION_ID, 0);
+		$sessionid = $this->input->post( self::SESSION_ID, '');
 		$uid = $this->input->post( IUser::ID, 0);
 		if($this->_doAuthUser($sessionid, $uid) != TRUE) {
 			$res[IUser::RES_CODE] = '101';
 		}
-		else if($uid == 0) {
-			$res[IUser::RES_CODE] = '102';
-		} 
 		else {
 			$arr = array(
 					user_model::ID 	=> 	$this->input->post(IUser::ID, 0)
@@ -231,10 +233,9 @@ class User extends CI_Controller {
 				$res[IUser::RES_CODE] = '1';
 				$res = array_merge($res, $data);
 			} else {
-				$res[IUser::RES_CODE] = '103';
+				$res[IUser::RES_CODE] = '102';
 			}
-		}
-		header($this->config->item("header_json_utf8")); 
+		} 
 		echo json_encode($res);
 		// test
 		// echo '<div><img src="'.$res['avatar_uri'].'" /></div>';
@@ -243,8 +244,8 @@ class User extends CI_Controller {
 
 	function add_circle() {
 		$res = array( IUser::RES_CODE => '1');
-		$id = $this->input->post('id');
-		$session_id = $this->input->post('sessionid');
+		$id = $this->input->post(IUser::ID);
+		$session_id = $this->input->post(self::SESSION_ID);
 		$add_time = now();
 		$field_name = ICircle::UPLOAD_FIELD_NAME;
 		$arr_name = explode(".", $_FILES[$field_name]['name']);
@@ -427,6 +428,61 @@ class User extends CI_Controller {
  	{
  		// $token = $this->
  		// if($this->_doAuthUser())
+ 		
+ 	}
+
+ 	/**
+ 	 * Add a comment item 
+ 	 * Created on 2014/10/18
+ 	 * @param array $arr =
+ 	 *				int 		'uid'	  					用户id
+ 	 *				string 		'sessionid'  				sessionid
+ 	 *				int 		'circle_id'  				圈子id
+ 	 *				string 		'comments'  				评论内容
+ 	 * @return  boolean 	true 	插入数据成功
+ 	 * 			boolean 	false 	失败
+ 	 */
+ 	function add_comment()
+ 	{
+ 		$this->load->library('ICirComment');
+ 		$res = array( IUser::RES_CODE => '0');
+
+ 		$user_id = $this->input->post(ICirComment::UID, 0);
+ 		$session_id = $this->input->post(self::SESSION_ID);
+ 		if($this->_doAuthUser($session_id, $user_id))
+ 		{
+ 			$this->load->model('Circle_comment_model');
+ 			$this->load->library('ICirComment');
+ 			$time = date('Y-m-d H:i:s',now());
+ 			$entry = array(
+ 					Circle_comment_model::CID => $this->input->post(ICirComment::CID, 0),
+ 					Circle_comment_model::UID => $user_id,
+ 					Circle_comment_model::COMMENTS => $this->input->post(ICirComment::COMMENTS, ''),
+ 					Circle_comment_model::CRE_DATE => $time
+ 				);
+
+ 			if($entry[Circle_comment_model::UID] == 0 || $entry[Circle_comment_model::CID] == 0 || $entry[Circle_comment_model::COMMENTS] == '')
+ 			{
+ 				$res[IUser::RES_CODE] = '102';
+ 			} else {
+ 				if(($id = $this->Circle_comment_model->insert_entry($entry)) != FALSE)
+ 				{
+ 					$res[IUser::RES_CODE] = '1';
+					$res[ICirComment::ID] = $id;
+					$res[ICirComment::UID] = $entry[Circle_comment_model::UID];
+					$res[ICirComment::CID] = $entry[Circle_comment_model::CID];
+					$res[ICirComment::COMMENTS] = $entry[Circle_comment_model::COMMENTS];
+					$res[ICirComment::CRE_DATE] = $entry[Circle_comment_model::CRE_DATE];
+ 				}
+ 				else {
+ 					$res[IUser::RES_CODE] = '103';
+ 				}
+ 			}
+
+ 		} else {
+ 			$res[IUser::RES_CODE] = '101';
+ 		}
+ 		echo json_encode($res);
  		
  	}
 

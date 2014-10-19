@@ -99,6 +99,7 @@
  				log_message('debug', 'The field : '.$order_by.' is not exists in table '.self::TABLE_NAME);
  		}
  		$res = $this->db->get();
+ 		log_message('debug', $this->db->last_query());
  		if($res->num_rows() >= 1)
  			return $res->result_array();
  		else
@@ -112,7 +113,7 @@
  	 *				int 		'comment_uid'  				登录id
  	 * 				int 		'comment_cid' 				圈子id
  	 *				string 		'comments' 					评论内容
- 	 * @return  boolean 	true 	插入数据成功
+ 	 * @return  int 		id 		插入数据成功,返回数据id
  	 * 			boolean 	false 	失败
  	 */
  	function insert_entry($arr)
@@ -120,7 +121,7 @@
  		$this->db->insert(self::TABLE_NAME, $arr);
  		log_message('debug', $this->db->last_query().'; comment_id: '.$this->db->insert_id().'; affected_rows: '.$this->db->affected_rows());
  		if($this->db->affected_rows() > 0)
- 			return TRUE;
+ 			return $this->db->insert_id();
  		else
  			return FALSE;
  	}

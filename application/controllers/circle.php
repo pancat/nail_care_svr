@@ -10,9 +10,6 @@
  */
 class Circle extends CI_Controller {
 
-	// protected $db_fields;
-
-
 
 	function __construct() {
 		parent::__construct();
@@ -47,7 +44,7 @@ class Circle extends CI_Controller {
 		$this->load->model('circle_model', 'circle');
 		$res = $this->circle->get_circle_list($offset, $limit, $order_by, $order);
 
-		header($this->config->item("header_json_utf8")); 	
+		// header($this->config->item("header_json_utf8")); 	
 		echo json_encode($res);
 	}
 
@@ -65,7 +62,7 @@ class Circle extends CI_Controller {
 		$this->load->model('circle_model', 'circle');
 		$res = $this->circle->get_circle_info($circle_id);
 
-		header($this->config->item("header_json_utf8")); 	
+		// header($this->config->item("header_json_utf8")); 	
 		echo json_encode($res);
 	}
 
@@ -101,7 +98,7 @@ class Circle extends CI_Controller {
 		$this->load->model('circle_comment_model', 'comment');
 		$res = $this->comment->get_circle_comments($circle_id, $offset, $limit, $order_by, $order);
 
-		header($this->config->item("header_json_utf8")); 	
+		// header($this->config->item("header_json_utf8")); 	
 		echo json_encode($res);
 	}
 
