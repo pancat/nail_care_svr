@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/fanrong/';
+$config['base_url']	= 'http://ec2-54-169-66-69.ap-southeast-1.compute.amazonaws.com/nail_care_test/';
 
 /*
 |--------------------------------------------------------------------------
