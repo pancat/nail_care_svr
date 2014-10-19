@@ -100,6 +100,7 @@ class User extends CI_Controller {
 	 					self::SESSION_DATE => $logtime,
 						);
 
+
 				// $res[IUser::RES_CODE] = '12'.$is_login;
 	 			$this->load->model('session_model');
 	 			if(!$is_login) {

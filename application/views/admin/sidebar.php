@@ -73,16 +73,16 @@
         </li>
 
         <li>
-            <a href="#" data-target=".legal-menu" class="nav-header collapsed" data-toggle="collapse">
+            <a  data-target=".legal-menu" class="nav-header collapsed" data-toggle="collapse">
                 <i class="fa fa-fw fa-legal"></i>
-                Legal
+                消息推送
                 <i class="fa fa-collapse"></i>
             </a>
         </li>
         <li>
             <ul class="legal-menu nav nav-list collapse">
                 <li >
-                    <a href="privacy-policy.html">
+                    <a href="<?php ?>">
                         <span class="fa fa-caret-right"></span>
                         Privacy Policy
                     </a>

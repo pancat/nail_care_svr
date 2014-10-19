@@ -32,6 +32,8 @@ class Admin_dev extends CI_Controller {
 	const TCIRCLE = 'admin/tcircle';
 	const TPRODUCT = 'admin/tproduct';
 
+	const MSG_PUSH = 'admin/msg_push';
+
 	const USER_NAME = 'username';
 	const PSD 		= 'psd';
 	const EMAIL  	= 'email';
@@ -151,6 +153,16 @@ class Admin_dev extends CI_Controller {
 		$this->load->view(self::TPRODUCT);
 		$this->load->view(self::FOOTER);
 	}
+
+
+	function show_msg_push($data = array()) {
+		$this->load->view(self::HEAD);
+		$this->load->view(self::NAVBAR_MAIN);
+		$this->load->view(self::SIDEBAR);
+		$this->load->view(self::MSG_PUSH);
+		$this->load->view(self::FOOTER);
+	}
+
 	
 
 	/**
