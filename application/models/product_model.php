@@ -26,7 +26,6 @@
  	 * 表字段的名称(上面表中的字段名称)
  	 * @var array
  	 */
-
  	const ID          = 'id';
  	const NAME        = 'name';
  	const MID         = 'mid';
@@ -35,32 +34,11 @@
  	const CRE_DATE    = 'cre_date';
  	const HIT         = 'hit';
 
- 	// protected $fields = array(
- 	// 					// 表 $table_name
- 	// 					'product_id'		=> 'id'	,			//int 主键 产品id
- 	// 					'product_name'		=> 'name',			//string 产品名称
- 	// 					'product_describe'	=> 'describe',		//string 描述				error 待修改
- 	// 					'product_cre_date'	=> 'cre_date',		//string 创建时间
- 	// 					'product_hit'		=> 'hit',			//int
- 	// 					'product_mid'		=> 'mid', 			//int 外键 美甲师id
- 	// 					// 表 $user_table
- 	// 					'm_id'				=> 'id',			//int 美甲师id 
- 	// 					'm_name'			=> 'nick_name',		//string 美甲师名称
- 	// 					'm_status'			=> 'status',
- 	// 					'm_type'			=> 'type',
- 	// 					// 表 $image_table
- 	// 					'image_uri'			=> 'uri',			//string 产品图片地址
- 	// 					'image_pid'			=> 'pid',			//int 外键 产品id 
- 	// 					'image_order'		=> 'order'			//int  照片排序 
- 	// 					);
-
  	/**
  	 * 软删除，仅修改字段status为“被删除”状态。
  	 * @var bool
  	 */
  	protected $soft_delete = TRUE;
-
-
 
  	function __construct() 
  	{
@@ -96,7 +74,6 @@
  	 */
  	function get_product_list($offset = 0, $limit = 10, $order_by = "", $order = "asc")
  	{
- 		echo user_model::TABLE_NAME;
  		$select = self::TABLE_NAME.'.'.self::ID.' as '.IProduct::ID.', '.
  					self::TABLE_NAME.'.'.self::NAME.' as '.IProduct::NAME.', '.
  					self::TABLE_NAME.'.'.self::DESCRIBE.' as '.IProduct::DESCRIBE.', '.
@@ -187,6 +164,49 @@
  			return $res->result_array();
  		else
  			return FALSE;
+ 	}
+
+
+
+ 	function search($like = '', $labels = array())
+ 	{
+ 		if($like == '' && empty($labels))
+ 			return $this->get_product_list();
+
+ 		$select = self::TABLE_NAME.'.'.self::ID.' as '.IProduct::ID.', '.
+ 					self::TABLE_NAME.'.'.self::NAME.' as '.IProduct::NAME.', '.
+ 					self::TABLE_NAME.'.'.self::DESCRIBE.' as '.IProduct::DESCRIBE.', '.
+ 					self::TABLE_NAME.'.'.self::CRE_DATE.' as '.IProduct::CRE_DATE.', '.
+ 					self::TABLE_NAME.'.'.self::HIT.' as '.IProduct::HIT.', '.
+ 					self::USER_TABLE.'.'.user_model::NICK_NAME.' as '.IUser::NICK_NAME
+ 					;
+
+
+ 		if(!empty($labels))
+		{
+ 			$sub_sql = self::TABLE_NAME.'.'.self::ID.' IN ('.'SELECT DISTINCT '.product_label_model::PID.' FROM '.self::PRODUCT_LABEL.' WHERE '.product_label_model::LID.' IN '.'('.implode(',', $labels)."))";
+ 			if($like != '')
+				$sub_sql .= ' OR '.self::TABLE_NAME.'.'.self::DESCRIBE.' LIKE '."'%".$like."%'";
+		}
+		else {
+			$sub_sql = self::TABLE_NAME.'.'.self::DESCRIBE.' LIKE '."'%".$like."%'";
+		}
+		$sql = 'SELECT '.$select.
+				' FROM '.self::TABLE_NAME.
+				' LEFT JOIN '.self::USER_TABLE.' ON '.self::USER_TABLE.'.'.user_model::TYPE.' = 2 AND '.
+				self::TABLE_NAME.'.'.self::MID.' = '. self::USER_TABLE.'.'.user_model::ID;
+		if(isset($sub_sql))
+			$sql .= ' WHERE '.$sub_sql;
+		// return $sql;
+		$res = $this->db->query($sql);
+		log_message("debug", $this->db->last_query());
+		// return json_encode($this->db->last_query());
+
+		if($res->num_rows() >= 1)
+			return $res->result_array();
+		else
+			return FALSE;
+
  	}
 
 }

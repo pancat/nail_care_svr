@@ -23,8 +23,6 @@
  	{
  		parent::__construct();
  	}
-
-
  }
 
 
