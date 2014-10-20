@@ -40,6 +40,14 @@ class Product extends CI_Controller {
 		echo json_encode($res);
 	}
 
+
+	function get_home_ad_list()
+	{
+		// echo json_encode(array(1=>"123"));
+		$res = $this->product_model->get_home_ad_list();
+		echo json_encode($res);
+	}
+
 	/**
 	 * Get a product information
 	 * @author fanz <2513273451@qq.com>

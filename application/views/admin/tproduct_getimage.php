@@ -3,7 +3,7 @@
         <div class="panel panel-default">
           <p class="panel-heading">URL</p>
           <div class="panel-body">
-            <pre>http://ec2-54-169-66-69.ap-southeast-1.compute.amazonaws.com/nail_care_svr/index.php/product/get_product_images</pre>
+            <pre>http://ec2-54-169-66-69.ap-southeast-1.compute.amazonaws.com/nail_care_svr/index.php/circle/get_circle_images</pre>
           </div>
         </div>
 
@@ -43,7 +43,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                        <td>product_id</td>
+                        <td>circle_id</td>
                         <td>true</td>
                         <td>int</td>
                         <td>无</td>
@@ -72,7 +72,7 @@
         <div class="panel panel-default">
           <p class="panel-heading">请求示例</p>
           <div class="panel-body">
-            <pre>{product_id:1}</pre>
+            <pre>{circle_id:1}</pre>
           </div>
         </div>
 
@@ -106,8 +106,8 @@
               <div class="col-md-5">
                 <form>
                   <div class="form-group">
-                    <label>产品id</label>
-                    <input id="getimage_pid" type="text" value="3" class="form-control"></div>
+                    <label>圈子id</label>
+                    <input id="getimage_cid" type="text" value="19" class="form-control"></div>
                 </form>
                 <div class="btn-toolbar list-toolbar">
                   <button id="getimage_test" class="btn btn-primary">提交测试</button>
@@ -122,7 +122,7 @@
           </div>
         </div>
           <div class="back-to-top pull-right">
-            <a href="<?php echo site_url('admin/admin_dev/show_tproduct'); ?>#top">
+            <a href="<?php echo site_url('admin/admin_dev/show_tcircle'); ?>#top">
                       回到顶部
             </a>
           </div>

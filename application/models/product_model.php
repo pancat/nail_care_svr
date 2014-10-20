@@ -31,8 +31,11 @@
  	const MID         = 'mid';
  	const THUMB_IMAGE = 'thumb_image';
  	const DESCRIBE    = 'describe';
+ 	const TYPE 		  = 'type';
  	const CRE_DATE    = 'cre_date';
  	const HIT         = 'hit';
+
+ 	const HOME_TYPE = 10;
 
  	/**
  	 * 软删除，仅修改字段status为“被删除”状态。
@@ -54,14 +57,6 @@
  		$this->load->library('IPdtLabel');
  		// $this->load->model('user_model');
  	}
-
- 	/**
- 	 * 获取user表的字段名称
- 	 */
- 	// function get_fields()
- 	// {
- 	// 	return $this->fields;
- 	// }
 
  	/**
  	 * Get products list 
@@ -103,6 +98,8 @@
  			if(!$this->db->field_exists($order_by, self::TABLE_NAME))
  				log_message('debug', 'The field : '.$order_by.' is not exists in table '.self::TABLE_NAME);
  		}
+ 		// if($last_date != "")
+ 		// 	$this->db->where(self::CRE_DATE.' >')
 
  		$res = $this->db->get();
  		log_message('debug',$this->db->last_query());
@@ -111,6 +108,27 @@
  			return $res->result_array();
  		else
  			return FALSE;
+ 	}
+
+
+ 	function get_home_ad_list($limit = 7)
+ 	{
+ 		$select = self::TABLE_NAME.'.'.self::ID.' as '.IProduct::ID.', '.
+ 					self::TABLE_NAME.'.'.self::DESCRIBE.' as '.IProduct::DESCRIBE.', '.
+ 					self::TABLE_NAME.'.'.self::THUMB_IMAGE.' as '.IProduct::IMAGE
+ 					;
+ 		$this->db->select($select);
+ 		$this->db->from(self::TABLE_NAME);
+ 		$this->db->limit($limit, 0);
+ 		$this->db->where(self::TYPE.' >= ', self::HOME_TYPE);
+ 		$res = $this->db->get();
+ 		log_message('debug',$this->db->last_query());
+ 		// log_message('debug', $this->db->last_query());
+ 		if($res->num_rows() >= 1)
+ 			return $res->result_array();
+ 		else
+ 			return FALSE;
+
  	}
 
  	/**

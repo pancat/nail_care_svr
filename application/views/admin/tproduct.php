@@ -18,6 +18,9 @@
   <div class="main-content">
     <ul class="nav nav-tabs">
       <li class="active">
+        <a href="#getproductadvs" data-toggle="tab">获取主页产品广告</a>
+      </li>
+      <li>
         <a href="#getproductlist" data-toggle="tab">获取产品列表</a>
       </li>
       <li>
@@ -52,6 +55,7 @@
       <br>
       <div id="myTabContent" class="tab-content">
 
+        <?php echo $this->load->view('admin/tproduct_getproductadvs'); ?>
         <?php echo $this->load->view('admin/tproduct_getproductlist'); ?>
         <?php echo $this->load->view('admin/tproduct_getproduct'); ?>
         <?php echo $this->load->view('admin/tproduct_getimage'); ?>
@@ -68,6 +72,15 @@
 <script src="assets/js/common/json-format.js" type="text/javascript"></script>
 <script>
 $(document).ready(function(){
+  $("#getproductadvs_test").click(function(){ 
+    $.get("<?php echo site_url('product/get_home_ad_list'); ?>",
+    {},
+    function(data, status){
+      formated = jsonformat(data);
+      $("#getproductadvs_result").html(formated);
+    });
+  });
+
   $("#getproductlist_test").click(function(){ 
     offset=$("#getproductlist_offset").val();
     limit =$("#getproductlist_limit").val();
@@ -123,6 +136,8 @@ $(document).ready(function(){
       $("#search_result").html(formated);
     });
   });
+
+
 
 
 });

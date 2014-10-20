@@ -16,11 +16,6 @@
  	 * 表名
  	 * @var string
  	 */
- 	// protected $table_name = 'fr_circle';
- 	// protected $image_table = 'fr_circle_image'; 			// error 待修改
- 	// protected $user_table = 'fr_user';
- 	// protected $comment_table = 'fr_circle_comment';
- 	// protected $product_label = "fr_product_label";
 
  	const TABLE_NAME 		= 'fr_circle';
  	const IMAGE_TABLE 		= 'fr_circle_image';
@@ -40,32 +35,6 @@
  	const HIT      = 'hit';
  	const UID      = 'uid';
  	const IMAGE    = 'thumb_image';
-
- 	protected $fields = array(
- 						// 表 $table_name
- 						'circle_id'			=> 'id'	,			//int 主键 圈子id
- 						'circle_title'		=> 'title',			//string 圈子名称
- 						'circle_content'	=> 'content',		//string 内容
- 						'circle_cre_date'	=> 'cre_date',		//string 创建时间
- 						'circle_hit'		=> 'hit',			//int
- 						'circle_uid'		=> 'uid',			//int
- 						// 'mid'				=> 'mid', 			//int 外键 美甲师id
- 						// 表 $user_table
- 						'user_id'			=> 'id',			//int 用户id 
- 						'user_nickname'		=> 'nick_name',		//string 用户名称
- 						'user_type'			=> 'type',			//类型
- 						'user_status'		=> 'status', 		//状态
- 						// 表 $image_table
- 						'image_uri'			=> 'uri',			//string 
- 						'image_cid'			=> 'cid',			//int 外键 圈子id 
- 						'image_order'		=> 'order',			//int  照片排序 
- 						// 表 $comment_table
- 						'comment_uid'		=> 'uid',			// 用户id
- 						'comment_uname'		=> 'nick_name',		// 用户昵称
- 						'comment_cid'		=> 'cid',			// 圈子id
- 						'comments'			=> 'comments',		// 评论内容
- 						'comment_cre_date'	=> 'cre_date'		// 发表时间
- 						);
 
  	/**
  	 * 软删除，仅修改字段status为“被删除”状态。
@@ -88,14 +57,6 @@
  		// $this->load->library('IUser');
 
  	}
-
- 	/**
- 	 * 获取circle表及其相关表的字段名称
- 	 */
- 	// function get_fields()
- 	// {
- 	// 	return $this->fields;
- 	// }
 
  	/**
  	 * Get circle list 
@@ -179,26 +140,7 @@
 
 
 
- 	/**
- 	 * Get a circle images info
- 	 * Created on 2014/10/01
- 	 * @param int $circle_id 
- 	 * @return  array 查询成功返回对象数组
- 	 * 			boolean 失败
- 	 */
- 	function get_circle_images($circle_id = 0)
- 	{
- 		$select = 
- 			self::IMAGE_TABLE.'.'.circle_image_model::URI.' as '.ICircle::IMAGE;
- 		$this->db->select($select);
- 		$this->db->from(self::IMAGE_TABLE);
- 		$this->db->where(self::IMAGE_TABLE.'.'.circle_image_model::CID.' = '.$circle_id);
- 		$res = $this->db->get();
- 		if($res->num_rows() >= 1)
- 			return $res->result_array();
- 		else
- 			return FALSE;
- 	}
+
 
  	/**
  	 * Insert a circle  item 
@@ -221,6 +163,18 @@
  			log_message('debug', $this->db->last_query());
  			return FALSE;
  		}
+ 	}
+
+
+ 	function update_entry($circle_id, $entry)
+ 	{
+ 		$this->db->where(self::ID, $circle_id);
+ 		$this->db->update(self::TABLE_NAME, $entry);
+ 		if($this->db->affected_rows() >= 0)
+ 			return TRUE;
+ 		else
+ 			return FALSE;
+
  	}
 
 

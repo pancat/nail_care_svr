@@ -1,9 +1,9 @@
-<div class="tab-pane fade" id="getcircle">
+<div class="tab-pane fade" id="getimage">
 
         <div class="panel panel-default">
           <p class="panel-heading">URL</p>
           <div class="panel-body">
-            <pre>http://ec2-54-169-66-69.ap-southeast-1.compute.amazonaws.com/nail_care_svr/index.php/circle/get_circle_info</pre>
+            <pre>http://ec2-54-169-66-69.ap-southeast-1.compute.amazonaws.com/nail_care_svr/index.php/circle/get_circle_images</pre>
           </div>
         </div>
 
@@ -79,34 +79,19 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td>circle_id</td>
-                        <td>integer</td>
-                        <td>圈子的id</td>
+                        <td>code</td>
+                        <td>string{'1', '101', '102', '103'}</td>
+                        <td>操作结果。{'1':成功, '101':用户验证失败,'102':信息缺失，'103':数据库写入失败</td>
                       </tr>
                       <tr>
-                        <td>title</td>
+                        <td>image_uri</td>
                         <td>string</td>
-                        <td>标题</td>
+                        <td>图片地址</td>
                       </tr>
                       <tr>
-                        <td>content</td>
+                        <td>image_order</td>
                         <td>string</td>
-                        <td>圈子内容</td>
-                      </tr>
-                      <tr>
-                        <td>cre_date</td>
-                        <td>string</td>
-                        <td>发表时间</td>
-                      </tr>
-                      <tr>
-                        <td>hit</td>
-                        <td>int</td>
-                        <td>未定义（点击量）</td>
-                      </tr>
-                      <tr>
-                        <td>nick_name</td>
-                        <td>string</td>
-                        <td>用户昵称</td>
+                        <td>图片顺序</td>
                       </tr>
                     </tbody>
                   </table></pre>
@@ -121,15 +106,15 @@
                 <form>
                   <div class="form-group">
                     <label>圈子id</label>
-                    <input id="getcircle_cid" type="text" value="1" class="form-control"></div>
+                    <input id="getimage_cid" type="text" value="1" class="form-control"></div>
                 </form>
                 <div class="btn-toolbar list-toolbar">
-                  <button id="getcircle_test" class="btn btn-primary">提交测试</button>
+                  <button id="getimage_test" class="btn btn-primary">提交测试</button>
                 </div>
               </div>
               <div class="col-md-9">
                 <label>返回结果</label>
-                <pre id="getcircle_result">无</pre>
+                <pre id="getimage_result">无</pre>
               </div>
             </div>
           </div>

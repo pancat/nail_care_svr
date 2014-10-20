@@ -134,7 +134,7 @@
  	function insert_entry($arr)
  	{
  		$this->db->insert(self::TABLE_NAME, $arr);
- 		log_message('debug', $this->db->last_query().'; user_id: '.$this->db->insert_id().'; affected_rows: '.$this->db->affected_rows());
+ 		log_message('debug', $this->db->last_query());
  		if($this->db->affected_rows() > 0)
  			return TRUE;
  		else

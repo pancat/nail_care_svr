@@ -23,6 +23,15 @@
       <li>
         <a href="#getcircle" data-toggle="tab">获取圈子信息</a>
       </li>
+      <li>
+        <a href="#getimage" data-toggle="tab">获取圈子图片</a>
+      </li> 
+      <li>
+        <a href="#addcircle" data-toggle="tab">添加圈子</a>
+      </li>
+     <!--<li>
+        <a href="#addimage" data-toggle="tab">添加圈子图片</a>
+      </li>-->
       <li class="dropdown">
         <a href="#" id="circomment" class="dropdown-toggle" data-toggle="dropdown">
           圈子评论
@@ -52,9 +61,13 @@
         load->view('admin/tcircle_getcirclelist'); ?>
         <?php echo $this->
         load->view('admin/tcircle_getcircle'); ?>
+        <?php echo $this->load->view('admin/tcircle_getimage'); ?>
+        <?php echo $this->load->view('admin/tcircle_addcircle'); ?>
+        <?php //echo $this->load->view('admin/tcircle_addimage'); ?>
         <?php echo $this->
         load->view('admin/tcircle_getcomment'); ?>
-        <?php echo $this->load->view('admin/tcircle_addcomment'); ?>
+        <?php echo $this->
+        load->view('admin/tcircle_addcomment'); ?>
       </div>
 
     </div>
@@ -65,6 +78,27 @@
 <script src="assets/js/common/json-format.js" type="text/javascript"></script>
 <script>
 $(document).ready(function(){
+
+  $("#addcircle_test").click(function(){
+    sessionid=$("#addcircle_sessionid").val(); 
+    id=$("#addcircle_uid").val();
+    cid =$("#addcircle_title").val();
+    content =$("#addcircle_content").val();
+    // uploadfile =$("#addcircle_uploadfile").val();
+    $.post("<?php echo site_url('user/add_circle'); ?>",
+    {
+      sessionid:sessionid,
+      id:id,
+      title:title,
+      content:content
+      // uploadfile:uploadfile
+    },
+    function(data,status){
+      // formated = jsonformat(data);
+      $("#addcircle_result").html(data);
+    });
+  });
+
   $("#addcomment_test").click(function(){
     sessionid=$("#addcomment_sessionid").val(); 
     uid=$("#addcomment_uid").val();
@@ -118,6 +152,16 @@ $(document).ready(function(){
     function(data, status){
       formated = jsonformat(data);
       $("#getcircle_result").html(formated);
+    });
+  });
+
+  $("#getimage_test").click(function(){ 
+    circle_id=$("#getimage_cid").val();
+    $.get("<?php echo site_url('circle/get_circle_images'); ?>"+"/"+circle_id,
+    {},
+    function(data, status){
+      formated = jsonformat(data);
+      $("#getimage_result").html(formated);
     });
   });
 

@@ -10,27 +10,7 @@
  */
 class User extends CI_Controller {
 
-	/**
-	 * 外部接口字段名($value是外部接口的字段名称)
-	 */
-	// const USER_ID 			= 'id';
-	// const USER_NAME 		= 'username';
-	// const PSD 				= 'password';
-	// const NICK_NAME 		= 'nick_name';
-	// const AGE 				= 'age';
-	// const EMAIL 			= 'email';
-	// const ADDR 				= 'address';
-	// const AVATAR_URI 		= 'avatar_uri';
-	// const REG_DATE 			= 'register_date';
-	// const LAST_LOGIN 		= 'last_login';
-	// const LAST_IP 			= 'last_ip';
-	// const STATUS 			= 'status';
-	// const LEVEL 			= 'level';
-	// const REMARK 			= 'remark';
 	
-
-
-	// const RES_CODE 			= 'code';
 	/**
 	 * session的字段名
 	 */
@@ -239,33 +219,33 @@ class User extends CI_Controller {
 	}
 
 
+	/**
+	 * Add a circle information include a image
+	 * @author fanz <251327341@qq.com>
+	 * @param string sessionid 
+	 * @param int id 用户id
+	 * @param string content 圈子内容
+	 * @param file uploadfile 图片文件
+	 * @return NULL 
+	 * @access public
+	 * @todo 
+	 */
 	function add_circle() {
 		$res = array( IUser::RES_CODE => '1');
 		$id = $this->input->post(IUser::ID);
 		$session_id = $this->input->post(self::SESSION_ID);
-		$add_time = now();
-		$field_name = ICircle::UPLOAD_FIELD_NAME;
-		$arr_name = explode(".", $_FILES[$field_name]['name']);
-		$upload_time = now();
-
-		$config['upload_path'] = ICircle::UPLOAD_PATH;
-		$config['allowed_types'] = 'gif|jpg|png';
-  		$config['max_size'] = '10000';
-  		$config['max_width']  = '2048';
-  		$config['max_height']  = '2048';
-		$config['file_name'] = date('YmdHis',$add_time).$id.rand(10,99).'.'.end($arr_name);
-		$this->load->library('upload', $config);
-  		if( !$this->upload->do_upload($field_name))
-  		{
-  			$res[IUser::RES_CODE] = '101';
-  			log_message('error', $this->upload->display_errors());
-  		}
-  		else {
+		if(!$this->_doAuthUser($session_id, $id))
+		{
+			$res[IUser::RES_CODE]  = '201';
+		}
+		else 
+		{
+			$add_time = now();
+			$field_name = ICircle::UPLOAD_FIELD_NAME;
 			$this->load->model('circle_model');
 			$entry = array(
 						circle_model::TITLE 	=> $this->input->post('title'),
-						circle_model::CONTENT 	=> $this->input->post('content'),
-						circle_model::IMAGE 	=> base_url().trim($config['upload_path'],'./').$config['file_name'],
+						circle_model::CONTENT 	=> $this->input->post('content', ''),
 						circle_model::CRE_DATE 	=> date('Y-m-d H:i:s', $add_time),
 						circle_model::UID 		=> $id
 					);
@@ -274,21 +254,70 @@ class User extends CI_Controller {
 
 			if($cid == FALSE)
 			{
-				$res[IUser::RES_CODE]  = '101';
+				$res[IUser::RES_CODE]  = '202';
 			}
-			else {
+			else if(isset($_FILES[$field_name]) && $_FILES[$field_name]['error'] == 0){
+				$arr_name = explode(".", $_FILES[$field_name]['name']);
+				$config['upload_path'] = ICircle::UPLOAD_PATH;
+				$config['allowed_types'] = 'gif|jpg|png';
+		  		$config['max_size'] = '10000';
+		  		$config['max_width']  = '2048';
+		  		$config['max_height']  = '2048';
+				$config['file_name'] = date('YmdHis',$add_time).$id.rand(10,99).'.'.end($arr_name);
+
+				$image_url = base_url().trim($config['upload_path'],'./').'/'.$config['file_name'];
 				$image_entry = array(
-									circle_image_model::URI => base_url().trim($config['upload_path'],'./').$config['file_name'],
+									circle_image_model::URI => $image_url,
 			  						circle_image_model::CID => $cid,
 			  						circle_image_model::ORDER => 1,
 								);
 				$this->load->model('circle_image_model');
-				$this->circle_image_model->insert_entry($image_entry);
-				$res['cid'] = $cid;
+				$image_id = $this->circle_image_model->insert_entry($image_entry);
+				if($image_id != FALSE)
+					$res['image_id'] = $image_id;
+				else
+					$res[IUser::RES_CODE] = '203';
+				if(!$this->circle_model->update_entry($cid, array(circle_model::IMAGE => $image_url)))
+					$res[IUser::RES_CODE] .= '204';
 
+				$this->load->library('upload', $config);
+		  		if( !$this->upload->do_upload($field_name))
+		  		{
+		  			$res[IUser::RES_CODE] .= '205';
+		  			log_message('error', $this->upload->display_errors());
+		  		}
+		  			$res[ICircle::ID] = $cid;
+			} 
+			else if(isset($_FILES[$field_name]) && $_FILES[$field_name]['error'] != 0 && $_FILES[$field_name]['error'] != 4) {
+				$res[IUser::RES_CODE] = '30'.$_FILES[$field_name]['error'];
 			}
-  		}
+			else
+			{
+				$res[IUser::RES_CODE] = '1';
+			}
+		}
   		echo json_encode($res);
+	}
+
+	function add_circle_image() {
+		$res = array( IUser::RES_CODE => '1');
+		$id = $this->input->post(IUser::ID);
+		$session_id = $this->input->post(self::SESSION_ID);
+		$add_time = now();
+		$field_name = ICircle::UPLOAD_FIELD_NAME;
+
+		if(isset($_FILES[$field_name])) {
+			$image_url = base_url().trim($config['upload_path'],'./').$config['file_name'];
+			$image_entry = array(
+								circle_image_model::URI => $image_url,
+		  						circle_image_model::CID => $cid,
+		  						circle_image_model::ORDER => 1
+							);
+			$this->load->model('circle_image_model');
+			$re = $this->circle_image_model->insert_entry($image_entry);
+			if(!$re)
+				$res[IUser::RES_CODE] = "101";
+		}
 	}
 
 
@@ -482,29 +511,6 @@ class User extends CI_Controller {
  		echo json_encode($res);
  		
  	}
-
-
- 		// /**
-	//  * 将从数据库中取得的多个用户的信息进行编码
-	//  * $data中的字段名称与数据库有关
-	//  * @author fanz <251327341@qq.com>
-	//  * @param array
-	//  * @return array 
-	//  * @access private
-	//  * @todo
-	//  */
-	// private function _gen_users_info($datas)
-	// {
-	// 	$arrs = array();
-	// 	foreach ($datas as $item) {
-	// 		$temp = $this->_gen_user_info($item);
-	// 		$arr1 = array($temp['userid'] => $temp);
-	// 		$arrs = array_merge($arrs, $arr1);
-	// 	}
-	// 	return $arrs;
-	// }
-
-
 
 }
 

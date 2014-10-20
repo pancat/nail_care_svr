@@ -7,3 +7,5 @@
 /application/logs
 /application/config/config.php
 /application/config/database.php
+/assets/res/product_images
+/assets/res/circle_images

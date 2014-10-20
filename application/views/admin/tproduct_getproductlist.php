@@ -1,4 +1,4 @@
-<div class="tab-pane active in" id="getproductlist">
+<div class="tab-pane fade" id="getproductlist">
 
   <div class="panel panel-default">
     <p class="panel-heading">URL</p>

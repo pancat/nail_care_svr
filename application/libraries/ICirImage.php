@@ -5,9 +5,9 @@ class ICirImage {
 	 * 外部接口字段名
 	 */
 	const ID    = 'id';
-	const URI   = 'user';
+	const URI   = 'image_uri';
 	const CID   = 'cid';
-	const ORDER = 'order';
+	const ORDER = 'image_order';
 	
 }
 

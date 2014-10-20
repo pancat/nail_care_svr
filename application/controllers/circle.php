@@ -75,7 +75,8 @@ class Circle extends CI_Controller {
 	 */
 	function get_circle_images($circle_id = 0)
 	{
-		$res = $this->circle_model->get_circle_images($circle_id); 
+		$this->load->model('circle_model');
+		$res = $this->circle_image_model->get_circle_images($circle_id); 
 		echo json_encode($res);
 	}
 
