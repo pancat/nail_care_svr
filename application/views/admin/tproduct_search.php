@@ -70,6 +70,11 @@
   </div>
 
   <div class="panel panel-default">
+    <p class="panel-heading">注意事项</p>
+    <div class="panel-body">搜索数据为空时，直接返回false</div>
+  </div>
+
+  <div class="panel panel-default">
     <p class="panel-heading">返回结果</p>
     <div class="panel-body">
       <pre><table class="table table-bordered">
