@@ -135,8 +135,7 @@
           </div>
         </div>
         <div class="back-to-top pull-right">
-          <a href="<?php echo site_url('admin/admin_dev/show_tcircle'); ?>
-            #top">
+          <a href="<?php echo site_url('admin/admin_dev/show_tcircle'); ?>#top">
                   回到顶部
           </a>
         </div>
