@@ -18,7 +18,7 @@ class User extends CI_Controller {
 	const SESSION_UID 		= 'uid';
 	const SESSION_DATE 		= 'last_date'; 
 
-	public $sessionid = '123';
+	public $sessionid = '';
 
 	function __construct() {
 		parent::__construct();
@@ -32,7 +32,7 @@ class User extends CI_Controller {
 
 	function index()
 	{
-		$this->load->view('welcome_message');
+		// $this->load->view('welcome_message');
 	}
 
 	/**
@@ -234,131 +234,140 @@ class User extends CI_Controller {
 		$res = array( IUser::RES_CODE => '1');
 		$id = $this->input->post(IUser::ID);
 		$session_id = $this->input->post(self::SESSION_ID);
+		$add_time = now();
+		$year_month = date('Ym',$add_time);
+		$full_path = $_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').ICircle::UPLOAD_PATH.'/'.$year_month;
+		$this->load->helper('dir_helper');
 		if(!$this->_doAuthUser($session_id, $id))
 		{
 			$res[IUser::RES_CODE]  = '201';
 		}
+		else if (!new_dir($full_path)) {
+			$res[IUser::RES_CODE]  = '202';			//无法创建文件夹		
+		}
 		else 
 		{
-			$add_time = now();
+			// 上传图片到服务器
 			$field_name = ICircle::UPLOAD_FIELD_NAME;
-			$this->load->model('circle_model');
-			$entry = array(
-						circle_model::TITLE 	=> $this->input->post('title'),
-						circle_model::CONTENT 	=> $this->input->post('content', ''),
-						circle_model::CRE_DATE 	=> date('Y-m-d H:i:s', $add_time),
-						circle_model::UID 		=> $id
-					);
+			$arr_name = explode(".", $_FILES[$field_name]['name']);
+			$config['upload_path'] = '.'.ICircle::UPLOAD_PATH.'/'.$year_month.'/';
+			$config['allowed_types'] = 'gif|jpg|png';
+	  		$config['max_size'] = '10000';
+	  		$config['max_width']  = '2048';
+	  		$config['max_height']  = '2048';
+			$config['file_name'] = date('YmdHis',$add_time).$id.rand(10,99).'.'.end($arr_name);
+			$this->load->library('upload', $config);
+	  		if( !$this->upload->do_upload($field_name))
+	  		{
+	  			$res[IUser::RES_CODE] = '203';					// 上传图片文件失败
+	  			log_message('error', $this->upload->display_errors());
+	  		} else {
+	  			// 写入数据库
+	  			$image_info = $this->upload->data();
+	  			$image_url = ltrim($config['upload_path'], '.').$config['file_name'];
+				$this->load->model('circle_model');
+				$entry = array(
+							circle_model::TITLE 	=> $this->input->post('title'),
+							circle_model::CONTENT 	=> $this->input->post('content', ''),
+							circle_model::CRE_DATE 	=> date('Y-m-d H:i:s', $add_time),
+							circle_model::UID 		=> $id,
+							circle_model::IMAGE 	=> $image_url,
+							circle_model::WIDTH 	=> $image_info['image_width'],
+							circle_model::HEIGHT 	=> $image_info['image_height']
+						);
+				$cid = $this->circle_model->insert_entry($entry);
+				if($cid == FALSE) {
+					$res[IUser::RES_CODE]  = '204'; 			// 数据库写入失败
+					@unlink($image_info['full_path']);       	// 删除服务器中的图片
+				} else {
+					$res[ICircle::ID]  = $cid;
+					$this->load->model('circle_image_model');
+					$image_entry = array(
+								circle_image_model::URI => $image_url,
+		  						circle_image_model::CID => $cid,
+		  						circle_image_model::ORDER => 1,
+		  						circle_image_model::WIDTH 	=> $image_info['image_width'],
+								circle_image_model::HEIGHT 	=> $image_info['image_height']
+							);
+					if( $this->circle_image_model->insert_entry($image_entry) == FALSE)
+						$res[IUser::RES_CODE]  = '205'; 			// 图片数据库写入失败
+				}
+	  			
+	  		}
 
-			$cid = $this->circle_model->insert_entry($entry);
-
-			if($cid == FALSE)
-			{
-				$res[IUser::RES_CODE]  = '202';
-			}
-			else if(isset($_FILES[$field_name]) && $_FILES[$field_name]['error'] == 0){
-				$arr_name = explode(".", $_FILES[$field_name]['name']);
-				$config['upload_path'] = ICircle::UPLOAD_PATH;
-				$config['allowed_types'] = 'gif|jpg|png';
-		  		$config['max_size'] = '10000';
-		  		$config['max_width']  = '2048';
-		  		$config['max_height']  = '2048';
-				$config['file_name'] = date('YmdHis',$add_time).$id.rand(10,99).'.'.end($arr_name);
-
-				$image_url = base_url().trim($config['upload_path'],'./').'/'.$config['file_name'];
-				$image_entry = array(
-									circle_image_model::URI => $image_url,
-			  						circle_image_model::CID => $cid,
-			  						circle_image_model::ORDER => 1,
-								);
-				$this->load->model('circle_image_model');
-				$image_id = $this->circle_image_model->insert_entry($image_entry);
-				if($image_id != FALSE)
-					$res['image_id'] = $image_id;
-				else
-					$res[IUser::RES_CODE] = '203';
-				if(!$this->circle_model->update_entry($cid, array(circle_model::IMAGE => $image_url)))
-					$res[IUser::RES_CODE] .= '204';
-
-				$this->load->library('upload', $config);
-		  		if( !$this->upload->do_upload($field_name))
-		  		{
-		  			$res[IUser::RES_CODE] .= '205';
-		  			log_message('error', $this->upload->display_errors());
-		  		}
-		  			$res[ICircle::ID] = $cid;
-			} 
-			else if(isset($_FILES[$field_name]) && $_FILES[$field_name]['error'] != 0 && $_FILES[$field_name]['error'] != 4) {
-				$res[IUser::RES_CODE] = '30'.$_FILES[$field_name]['error'];
-			}
-			else
-			{
-				$res[IUser::RES_CODE] = '1';
-			}
 		}
   		echo json_encode($res);
 	}
 
+	function _circle_exist($uid, $cid) {
+		$this->load->model('circle_model');
+		$arr = array(
+ 				circle_model::ID => $cid,
+ 				circle_model::UID => $uid
+ 				);
+		if($this->circle_model->circle_exist($arr))
+			return TRUE;
+		else
+			return FALSE;
+	}
+
 	function add_circle_image() {
 		$res = array( IUser::RES_CODE => '1');
-		$id = $this->input->post(IUser::ID);
+		$uid = $this->input->post('uid');
+		$cid = $this->input->post('cid');
 		$session_id = $this->input->post(self::SESSION_ID);
 		$add_time = now();
 		$field_name = ICircle::UPLOAD_FIELD_NAME;
-
-		if(isset($_FILES[$field_name])) {
-			$image_url = base_url().trim($config['upload_path'],'./').$config['file_name'];
-			$image_entry = array(
-								circle_image_model::URI => $image_url,
-		  						circle_image_model::CID => $cid,
-		  						circle_image_model::ORDER => 1
-							);
-			$this->load->model('circle_image_model');
-			$re = $this->circle_image_model->insert_entry($image_entry);
-			if(!$re)
-				$res[IUser::RES_CODE] = "101";
+		$year_month = date('Ym',$add_time);
+		$full_path = $_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').ICircle::UPLOAD_PATH.'/'.$year_month;
+		$this->load->helper('dir_helper');
+		if(!$this->_doAuthUser($session_id, $uid))
+		{
+			$res[IUser::RES_CODE]  = '201';
 		}
+		else if (!new_dir($full_path)) {
+			$res[IUser::RES_CODE]  = '202';			//无法创建文件夹		
+		}
+		else if (!$this->_circle_exist($uid, $cid)) {
+			$res[IUser::RES_CODE]  = '203';
+		}
+		else 
+		{
+			// 上传图片到服务器
+			$field_name = ICircle::UPLOAD_FIELD_NAME;
+			$arr_name = explode(".", $_FILES[$field_name]['name']);
+			$config['upload_path'] = '.'.ICircle::UPLOAD_PATH.'/'.$year_month.'/';
+			$config['allowed_types'] = 'gif|jpg|png';
+	  		$config['max_size'] = '10000';
+	  		$config['max_width']  = '2048';
+	  		$config['max_height']  = '2048';
+			$config['file_name'] = date('YmdHis',$add_time).$uid.rand(10,99).'.'.end($arr_name);
+			$this->load->library('upload', $config);
+	  		if( !$this->upload->do_upload($field_name)) {
+	  			$res[IUser::RES_CODE] = '204';						// 上传图片文件失败
+	  			log_message('error', $this->upload->display_errors());
+	  		} 
+	  		else {
+	  			// 写入数据库
+	  			$image_info = $this->upload->data();
+	  			$image_url = ltrim($config['upload_path'], '.').$config['file_name'];
+				$this->load->model('circle_image_model');
+				$image_entry = array(
+									circle_image_model::URI 	=> $image_url,
+			  						circle_image_model::CID 	=> $cid,
+			  						circle_image_model::ORDER 	=> 2,
+			  						circle_image_model::WIDTH 	=> $image_info['image_width'],
+									circle_image_model::HEIGHT 	=> $image_info['image_height']
+								);
+				$re = $this->circle_image_model->insert_entry($image_entry);
+				if(!$re)
+					$res[IUser::RES_CODE] = "101";
+	  		}
+		}
+
+		echo json_encode($res);
 	}
 
-
-	// function add_circle_image() {
-
-	// 	// $this->load->helper('path');
-	// 	$res = array( IUser::RES_CODE => '1');
-
-	// 	$id = $this->input->post('id');
-	// 	$cid = $this->input->post('cid');
-	// 	$session_id = $this->input->post('sessionid');
-	// 	$field_name = ICircle::UPLOAD_FIELD_NAME;
-	// 	$upload_time = now();
-	// 	$arr_name = explode(".", $_FILES[$field_name]['name']);
-
-	// 	$config['upload_path'] = ICircle::UPLOAD_PATH;
-	// 	$config['allowed_types'] = 'gif|jpg|png';
- //  		$config['max_size'] = '100';
- //  		$config['max_width']  = '1024';
- //  		$config['max_height']  = '768';
-
- //  		$config['file_name'] = date('YmdHis',now()).$id.rand(10,99).'.'.end($arr_name);
-	// 	$this->load->library('upload', $config);
- //  		if( !$this->upload->do_upload($field_name))
- //  		{
- //  			$res[IUser::RES_CODE] = '101';
- //  			log_message('error', $this->upload->display_errors());
- //  		}
- //  		else {
- //  			$this->load->model('circle_image_model');
- //  			$entry = array(
- //  						circle_image_model::URI => base_url().trim($config['upload_path'],'./').$config['file_name'],
- //  						circle_image_model::CID => $cid,
- //  						circle_image_model::UID => $id,
- //  						circle_image_model::CID => $cid,
- //  					);
- //  			$this->circle_image_model->insert_entry($entry);
- //  		}
- //  		print_r($this->upload->data());
- //  		echo $res;
-	// }
 
 	function del_circle_image($id = '') {
 		$this->load->model('circle_image_model');
@@ -445,13 +454,10 @@ class User extends CI_Controller {
  	 * @param array $arr =
  	 *				int 		'user_id'  					用户id
  	 *				int 		'comment_uid'  				评论id
- 	 *				int 		'comment_uid'  				评论id
- 	 *				int 		'comment_uid'  				评论id
  	 * @return  boolean 	true 	插入数据成功
  	 * 			boolean 	false 	失败
  	 */
- 	function delete_comment($id ='', $uid = '')
- 	{
+ 	function delete_comment($id ='', $uid = '') {
  		// $token = $this->
  		// if($this->_doAuthUser())
  		
@@ -468,8 +474,7 @@ class User extends CI_Controller {
  	 * @return  boolean 	true 	插入数据成功
  	 * 			boolean 	false 	失败
  	 */
- 	function add_comment()
- 	{
+ 	function add_comment() {
  		$this->load->library('ICirComment');
  		$res = array( IUser::RES_CODE => '0');
 
@@ -511,6 +516,121 @@ class User extends CI_Controller {
  		echo json_encode($res);
  		
  	}
+
+
+	/**
+ 	 * Upload a user's avatar image 
+ 	 * Created on 2014/10/28
+ 	 * @param array $arr =
+ 	 *				int 		'id'	  					用户id
+ 	 *				string 		'sessionid'  				sessionid
+ 	 *				file 		'uploadavatar'  			头像图片
+ 	 * @return  array
+ 	 * 			
+ 	 */
+ 	function upload_avatar() {
+ 		$res = array( IUser::RES_CODE => '1');
+		$id = $this->input->post(IUser::ID);
+		$session_id = $this->input->post(self::SESSION_ID);
+		$field_name = IUser::UPLOAD_AVATAR_FIELD;
+		$add_time = now();
+		$year_month = date('Ym',$add_time);
+		$full_path = $_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').IUser::UPLOAD_AVATAR_PATH.'/'.$year_month;
+		$this->load->helper('dir_helper');
+		if(!$this->_doAuthUser($session_id, $id)) {
+			$res[IUser::RES_CODE]  = '201';
+		}
+		else if (!new_dir($full_path)) {
+			$res[IUser::RES_CODE]  = '207';			//无法创建文件夹		
+		}
+		else 
+		{
+			
+			// 上传图片
+			$arr_name = explode(".", $_FILES[$field_name]['name']);
+			// var_dump($arr_name);
+			$config['upload_path'] = '.'.IUser::UPLOAD_AVATAR_PATH.'/'.$year_month.'/';
+			$config['allowed_types'] = 'gif|jpg|png';
+	  		$config['max_size'] = '10000';
+	  		$config['max_width']  = '2048';
+	  		$config['max_height']  = '2048';
+			$config['file_name'] = date('YmdHis',$add_time).$id.rand(10,99).'.'.end($arr_name);
+
+			$this->load->library('upload', $config);
+	  		if($this->upload->do_upload($field_name))
+	  		{
+	  			// 保存图片信息到数据库
+				$image_info = $this->upload->data();
+				// echo $image_info['image_width'].' '.$image_info['image_height'].' ';
+				// echo json_encode($image_info);
+				$image_url = ltrim($config['upload_path'], '.').$config['file_name'];
+				$arr = array(
+						user_model::AVATAR_URI => $image_url,
+						user_model::AVATAR_WIDTH => $image_info['image_width'],
+						user_model::AVATAR_HEIGHT => $image_info['image_height'],
+						);
+				$old_data = $this->user_model->get_avatar_url($id);
+				$old_avatar_uri = $old_data[IUser::AVATAR_URI];
+				$re = $this->user_model->update_avatar_info($id, $arr);
+				if($re) {
+					$res[IUser::AVATAR_URI]  = $image_url;
+					@unlink($_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').'/'.$old_avatar_uri);
+				}
+				else {
+					$res[IUser::RES_CODE]  = '203'; 		// 图片保存数据库失败
+					@unlink($image_info['full_path']);       // 删除服务器中的图片
+				}
+	  		} else {
+	  			$res[IUser::RES_CODE]  = '202';				// 图片上传数据库失败
+	  		}
+		}
+
+		echo json_encode($res);
+ 	}
+
+
+
+ 	function update_nickname() {
+ 		$res = array( IUser::RES_CODE => '1');
+ 		$id = $this->input->post('id');
+		$session_id = $this->input->post(self::SESSION_ID);
+		$nickname = $this->input->post('nickname');
+
+		if(!$this->_doAuthUser($session_id, $id)) { 
+			$res[IUser::RES_CODE]  = '201';
+		} else {
+			$arr = array(
+					user_model::ID => $id,
+					user_model::NICK_NAME => $nickname
+					);
+			$re = $this->user_model->update_entry($id, $arr);
+			if(!$re)
+				$res[IUser::RES_CODE]  = '202';
+		}
+		echo json_encode($res);
+ 	}
+
+ 	function update_password() {
+ 		$res = array( IUser::RES_CODE => '1');
+ 		$id = $this->input->post('id');
+		$session_id = $this->input->post(self::SESSION_ID);
+		$psd = $this->input->post('password');
+
+		if(!$this->_doAuthUser($session_id, $id)) { 
+			$res[IUser::RES_CODE]  = '201';
+		} else {
+			$arr = array(
+					user_model::ID => $id,
+					user_model::PSD => $psd
+					);
+			$re = $this->user_model->update_entry($id, $arr);
+			if(!$re)
+				$res[IUser::RES_CODE]  = '202';
+		}
+		echo json_encode($res);
+ 	}
+
+
 
 }
 

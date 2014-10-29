@@ -27,6 +27,8 @@
  	const EMAIL 		 	= 'email';
 	const ADDR 		 		= 'address';
  	const AVATAR_URI 		= 'avatar_uri';
+ 	const AVATAR_WIDTH 		= 'avatar_width';
+ 	const AVATAR_HEIGHT 	= 'avatar_height';
  	const REGISTER_DATE 	= 'register_date';
  	const LAST_LOGIN 		= 'last_login';
  	const TYPE 				= 'type';
@@ -45,6 +47,7 @@
  	function __construct() 
  	{
  		parent::__construct();
+ 		$this->load->library('IUser');
  	}
 
  	/**
@@ -121,6 +124,16 @@
  		return $this->db->get(self::TABLE_NAME)->result();
  	}
 
+ 	function get_avatar_url($id)
+ 	{
+		$res = $this->db->select(User_model::AVATAR_URI.' as '.IUser::AVATAR_URI)->where(self::ID, $id)->get(self::TABLE_NAME);
+ 		log_message('debug', $this->db->last_query());
+ 		if($res->num_rows() >= 1)
+ 			return $res->row_array();
+ 		else
+ 			return FALSE;
+ 	}
+
  	/**
  	 * Insert a user item 
  	 * Created on 2014/9/25
@@ -148,6 +161,7 @@
  	 * @param array $arr =
  	 *				string 		'username'  		登录用户名
  	 * 				string		'nick_name'			昵称
+ 	 * 				string		'password'			密码
  	 *				int 		'gender'			性别
  	 *				int 		'age'				年龄				
  	 *				string 		'email'				email
@@ -156,6 +170,29 @@
  	 * 			boolean 	false 	失败
  	 */
  	function update_entry($id, $arr)
+ 	{
+ 		$this->db->where(self::ID,$id);
+ 		$this->db->update(self::TABLE_NAME, $arr);
+ 		if($this->db->affected_rows() > 0)
+ 			return TRUE;
+ 		else 
+ 			return FALSE;
+ 	}
+
+ 	/**
+ 	 * Update a user avatar info 
+ 	 * Created on 2014/10/28
+ 	 * @param int $id
+ 	 * @param array $arr =
+ 	 *				string 		'id'  				登录用户名
+ 	 * 				string		'avatar_uri'		头像地址
+ 	 * 				string		'avatar_width'		头像宽度
+ 	 * 				string		'avatar_height'		头像高度
+ 	 *
+ 	 * @return  boolean 	true 	插入数据成功
+ 	 * 			boolean 	false 	失败
+ 	 */
+ 	function update_avatar_info($id, $arr)
  	{
  		$this->db->where(self::ID,$id);
  		$this->db->update(self::TABLE_NAME, $arr);
@@ -177,13 +214,24 @@
  				self::LAST_LOGIN=>now(),
  				self::LAST_IP=>$this->input->ip_address
  				);
- 		$this->db->where(self::ID);
- 		$this->db->update(self::ID, $id);
+ 		$this->db->where(self::ID, $id);
+ 		$this->db->update(self::TABLE_NAME, $arr);
  		if($this->db->affected_rows() > 0)
  			log_message('info','user '.$id.' login success with ip address: '.$arr[self::LAST_IP]);
  		else
  			log_message('error','user '.$id.' login success but update uncorrect with ip address: '.$arr[self::LAST_IP]);
  	}
+
+
+ 	function user_exist($arr) {
+ 		$this->db->where($arr);
+ 		$res = $this->db->get(self::TABLE_NAME);
+ 		if($res->num_rows() > 0)
+ 			return TRUE;
+ 		else
+ 			return FALSE;
+ 	}
+
 
  }
 

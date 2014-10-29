@@ -40,6 +40,12 @@ class Product extends CI_Controller {
 		echo json_encode($res);
 	}
 
+	function get_latest_list($latest_date = '', $limit = 10)
+	{
+		$res = $this->product_model->get_latest_list(urldecode($latest_date), $limit);
+		echo json_encode($res);	
+	}
+
 
 	function get_home_ad_list()
 	{

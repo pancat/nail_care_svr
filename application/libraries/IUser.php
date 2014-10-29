@@ -19,6 +19,9 @@ class IUser {
 	const STATUS 			= 'status';
 	const LEVEL 			= 'level';
 	const REMARK 			= 'remark';
+
+	const UPLOAD_AVATAR_FIELD 			= 'uploadavatar';
+	const UPLOAD_AVATAR_PATH 			= '/assets/res/user_avatar';
 }
 
 /* End of file IUser.php */

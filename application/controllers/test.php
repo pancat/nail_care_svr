@@ -59,8 +59,33 @@ class Test extends CI_Controller {
 
 	public function uploadfile()
 	{
-		
 		$this->load->view('test/upload',array('error' => ''));
+	}
+
+
+	public function uploadcircleimage()
+	{
+		$this->load->view('test/uploadcircleimage',array('error' => ''));
+	}
+
+	public function uploadavatar()
+	{
+		$this->load->view('test/uploadavatar',array('error' => ''));
+	}
+
+	public function uploadproduct()
+	{
+		$this->load->view('test/uploadproduct',array('error' => ''));
+	}
+
+	public function uploadproductimage()
+	{
+		$this->load->view('test/uploadproductimage',array('error' => ''));
+	}
+
+	public function updateuserinfo()
+	{
+		$this->load->view('test/updateuserinfo',array('error' => ''));	
 	}
 
 	public function getsession($sessionid)

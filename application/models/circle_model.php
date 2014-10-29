@@ -35,6 +35,8 @@
  	const HIT      = 'hit';
  	const UID      = 'uid';
  	const IMAGE    = 'thumb_image';
+ 	const WIDTH    = 'width';
+ 	const HEIGHT    = 'height';
 
  	/**
  	 * 软删除，仅修改字段status为“被删除”状态。
@@ -138,10 +140,6 @@
  	}
 
 
-
-
-
-
  	/**
  	 * Insert a circle  item 
  	 * Created on 2014/10/15
@@ -149,7 +147,7 @@
  	 *				int 		'uid'  				登录id
  	 * 				int 		'' 				圈子id
  	 *				string 		'comments' 					评论内容
- 	 * @return  boolean 	true 	插入数据成功
+ 	 * @return  int 	 	id 		插入数据的id
  	 * 			boolean 	false 	失败
  	 */
  	function insert_entry($entry)
@@ -174,7 +172,16 @@
  			return TRUE;
  		else
  			return FALSE;
+ 	}
 
+ 	function circle_exist($arr) 
+ 	{
+ 		$this->db->where($arr);
+ 		$res = $this->db->get(self::TABLE_NAME);
+ 		if($res->num_rows() > 0)
+ 			return TRUE;
+ 		else
+ 			return FALSE;
  	}
 
 

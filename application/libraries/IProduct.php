@@ -10,6 +10,11 @@ class IProduct {
 	const HIT 					= 'hit';
 	const CRE_DATE				= 'cre_date';
 	const IMAGE   				= 'image_uri';
+	const IMAGE_WIDTH   		= 'image_width';
+	const IMAGE_HEIGHT   		= 'image_height';
+
+	const UPLOAD_FIELD_NAME 	= 'uploadfile';
+	const UPLOAD_PATH 			= '/assets/res/product_images';
 
 }
 

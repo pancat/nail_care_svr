@@ -26,6 +26,8 @@
 
  	const ID    = 'id';
  	const URI   = 'uri';
+ 	const WIDTH = 'width';
+ 	const HEIGHT = 'height';
  	const CID   = 'cid';
  	const ORDER = 'order';
  	// const cre_date = 'cre_date';

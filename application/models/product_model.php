@@ -30,6 +30,8 @@
  	const NAME        = 'name';
  	const MID         = 'mid';
  	const THUMB_IMAGE = 'thumb_image';
+ 	const HEIGHT 	  = 'image_height';
+ 	const WIDTH 	  = 'image_width';
  	const DESCRIBE    = 'describe';
  	const TYPE 		  = 'type';
  	const CRE_DATE    = 'cre_date';
@@ -73,18 +75,16 @@
  					self::TABLE_NAME.'.'.self::NAME.' as '.IProduct::NAME.', '.
  					self::TABLE_NAME.'.'.self::DESCRIBE.' as '.IProduct::DESCRIBE.', '.
  					self::TABLE_NAME.'.'.self::THUMB_IMAGE.' as '.IProduct::IMAGE.', '.
+ 					self::TABLE_NAME.'.'.self::WIDTH.' as '.IProduct::IMAGE_WIDTH.', '.
+ 					self::TABLE_NAME.'.'.self::HEIGHT.' as '.IProduct::IMAGE_HEIGHT.', '.
  					self::TABLE_NAME.'.'.self::CRE_DATE.' as '.IProduct::CRE_DATE.', '.
  					self::TABLE_NAME.'.'.self::HIT.' as '.IProduct::HIT.', '.
- 					self::IMAGE_TABLE.'.'.product_image_model::URI.' as '.IProduct::IMAGE.', '.
+ 					self::USER_TABLE.'.'.user_model::AVATAR_URI.' as '.IUser::AVATAR_URI.', '.
  					self::USER_TABLE.'.'.user_model::NICK_NAME.' as '.IUser::NICK_NAME.' '
  					;
  		// 'product.id as id, product.name as name, image.uri as image_uri'
  		$this->db->select($select);
  		$this->db->from(self::TABLE_NAME);
- 		$this->db->join(self::IMAGE_TABLE, 
- 				self::IMAGE_TABLE.'.'.product_image_model::PID.' = '.self::TABLE_NAME.'.'.self::ID
- 				.' and '.self::IMAGE_TABLE.'.'.product_image_model::ORDER.' = 0 ', 'left'
- 				);
  		$this->db->join(self::USER_TABLE, 
  				self::TABLE_NAME.'.'.self::MID.' = '.self::USER_TABLE.'.'.user_model::ID
  				.' and '.self::USER_TABLE.'.'.user_model::TYPE.' = 2 '
@@ -108,6 +108,41 @@
  			return $res->result_array();
  		else
  			return FALSE;
+ 	}
+
+
+ 	function get_latest_list($latest_date, $limit)
+ 	{
+ 		$select = self::TABLE_NAME.'.'.self::ID.' as '.IProduct::ID.', '.
+ 					self::TABLE_NAME.'.'.self::NAME.' as '.IProduct::NAME.', '.
+ 					self::TABLE_NAME.'.'.self::DESCRIBE.' as '.IProduct::DESCRIBE.', '.
+ 					self::TABLE_NAME.'.'.self::THUMB_IMAGE.' as '.IProduct::IMAGE.', '.
+ 					self::TABLE_NAME.'.'.self::WIDTH.' as '.IProduct::IMAGE_WIDTH.', '.
+ 					self::TABLE_NAME.'.'.self::HEIGHT.' as '.IProduct::IMAGE_HEIGHT.', '.
+ 					self::TABLE_NAME.'.'.self::CRE_DATE.' as '.IProduct::CRE_DATE.', '.
+ 					self::TABLE_NAME.'.'.self::HIT.' as '.IProduct::HIT.', '.
+ 					self::USER_TABLE.'.'.user_model::AVATAR_URI.' as '.IUser::AVATAR_URI.', '.
+ 					self::USER_TABLE.'.'.user_model::NICK_NAME.' as '.IUser::NICK_NAME.' '
+ 					;
+ 		$this->db->select($select);
+ 		$this->db->from(self::TABLE_NAME);
+ 		$this->db->join(self::USER_TABLE, 
+ 				self::TABLE_NAME.'.'.self::MID.' = '.self::USER_TABLE.'.'.user_model::ID
+ 				.' and '.self::USER_TABLE.'.'.user_model::TYPE.' = 2 '
+ 				.' and '.self::USER_TABLE.'.'.user_model::STATUS.' = 1 '
+ 				, 'left'
+ 				);
+ 		$this->db->where(self::CRE_DATE.' > ', $latest_date);
+ 		$this->db->limit($limit);
+ 		$this->db->order_by(self::CRE_DATE, 'desc');
+ 		$res = $this->db->get();
+ 		log_message('debug',$this->db->last_query());
+ 		// log_message('debug', $this->db->last_query());
+ 		if($res->num_rows() >= 1)
+ 			return $res->result_array();
+ 		else
+ 			return FALSE;
+
  	}
 
 
@@ -160,7 +195,6 @@
  		else
  			return FALSE;
  	}
-
 
 
  	/**
@@ -225,6 +259,37 @@
 		else
 			return FALSE;
 
+ 	}
+
+ 	/**
+ 	 * Insert a product item 
+ 	 * Created on 2014/10/15
+ 	 * @param array $arr =
+ 	 *				int 		'mid'  				登录id
+ 	 * @return  int 	 	id 		插入数据的id
+ 	 * 			boolean 	false 	失败
+ 	 */
+ 	function insert_entry($entry) {
+ 		$this->db->insert(self::TABLE_NAME, $entry);
+ 		if($this->db->affected_rows() > 0) {
+ 			log_message('debug', $this->db->last_query());
+ 			return $this->db->insert_id();
+ 		}
+ 		else {
+ 			log_message('debug', $this->db->last_query());
+ 			return FALSE;
+ 		}
+ 	}
+
+
+
+ 	function product_exist($arr) {
+ 		$this->db->where($arr);
+ 		$res = $this->db->get(self::TABLE_NAME);
+ 		if($res->num_rows() > 0)
+ 			return TRUE;
+ 		else
+ 			return FALSE;
  	}
 
 }
