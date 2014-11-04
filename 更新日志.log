@@ -29,10 +29,13 @@
 	完善产品价格，添加产品原价，产品价格
 
 7、完成 “用户修改昵称” 接口
+	/user/update_nickname	post 	nickname
 
 8、完成 “用户修改密码” 接口
+	/user/update_password	post 	password
 
 9、完成 “获取最新产品列表” 接口
+	/product/get_latest_list	get 	latest_date 	limit
 
 
 
