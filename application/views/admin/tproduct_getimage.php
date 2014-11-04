@@ -107,7 +107,7 @@
                 <form>
                   <div class="form-group">
                     <label>产品id</label>
-                    <input id="getimage_pid" type="text" value="43" class="form-control"></div>
+                    <input id="getimage_pid" type="text" value="3" class="form-control"></div>
                 </form>
                 <div class="btn-toolbar list-toolbar">
                   <button id="getimage_test" class="btn btn-primary">提交测试</button>

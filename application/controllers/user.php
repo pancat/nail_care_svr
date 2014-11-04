@@ -236,7 +236,7 @@ class User extends CI_Controller {
 		$session_id = $this->input->post(self::SESSION_ID);
 		$add_time = now();
 		$year_month = date('Ym',$add_time);
-		$full_path = $_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').ICircle::UPLOAD_PATH.'/'.$year_month;
+		$full_path = rtrim($_SERVER['DOCUMENT_ROOT'], '/').'/'.$this->config->item('project_name').ICircle::UPLOAD_PATH.'/'.$year_month;
 		$this->load->helper('dir_helper');
 		if(!$this->_doAuthUser($session_id, $id))
 		{
@@ -319,7 +319,7 @@ class User extends CI_Controller {
 		$add_time = now();
 		$field_name = ICircle::UPLOAD_FIELD_NAME;
 		$year_month = date('Ym',$add_time);
-		$full_path = $_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').ICircle::UPLOAD_PATH.'/'.$year_month;
+		$full_path = rtrim($_SERVER['DOCUMENT_ROOT'], '/').'/'.$this->config->item('project_name').ICircle::UPLOAD_PATH.'/'.$year_month;
 		$this->load->helper('dir_helper');
 		if(!$this->_doAuthUser($session_id, $uid))
 		{
@@ -535,7 +535,7 @@ class User extends CI_Controller {
 		$field_name = IUser::UPLOAD_AVATAR_FIELD;
 		$add_time = now();
 		$year_month = date('Ym',$add_time);
-		$full_path = $_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').IUser::UPLOAD_AVATAR_PATH.'/'.$year_month;
+		$full_path = rtrim($_SERVER['DOCUMENT_ROOT'], '/').'/'.$this->config->item('project_name').IUser::UPLOAD_AVATAR_PATH.'/'.$year_month;
 		$this->load->helper('dir_helper');
 		if(!$this->_doAuthUser($session_id, $id)) {
 			$res[IUser::RES_CODE]  = '201';
@@ -574,7 +574,7 @@ class User extends CI_Controller {
 				$re = $this->user_model->update_avatar_info($id, $arr);
 				if($re) {
 					$res[IUser::AVATAR_URI]  = $image_url;
-					@unlink($_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').'/'.$old_avatar_uri);
+					@unlink(rtrim($_SERVER['DOCUMENT_ROOT'], '/').'/'.$this->config->item('project_name').'/'.$old_avatar_uri);
 				}
 				else {
 					$res[IUser::RES_CODE]  = '203'; 		// 图片保存数据库失败

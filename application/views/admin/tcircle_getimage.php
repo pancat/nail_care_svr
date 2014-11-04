@@ -79,9 +79,7 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td>code</td>
-                        <td>string{'1', '101', '102', '103'}</td>
-                        <td>操作结果。{'1':成功, '101':用户验证失败,'102':信息缺失，'103':数据库写入失败</td>
+                        <td>若查询无结果返回False</td>
                       </tr>
                       <tr>
                         <td>image_uri</td>
@@ -106,7 +104,7 @@
                 <form>
                   <div class="form-group">
                     <label>圈子id</label>
-                    <input id="getimage_cid" type="text" value="1" class="form-control"></div>
+                    <input id="getimage_cid" type="text" value="43" class="form-control"></div>
                 </form>
                 <div class="btn-toolbar list-toolbar">
                   <button id="getimage_test" class="btn btn-primary">提交测试</button>

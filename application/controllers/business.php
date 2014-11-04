@@ -42,7 +42,7 @@ class Business extends CI_Controller {
 		$add_time = now();
 		$field_name = IProduct::UPLOAD_FIELD_NAME;
 		$year_month = date('Ym',$add_time);
-		$full_path = $_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').IProduct::UPLOAD_PATH.'/'.$year_month;
+		$full_path = rtrim($_SERVER['DOCUMENT_ROOT'], '/').'/'.$this->config->item('project_name').IProduct::UPLOAD_PATH.'/'.$year_month;
 		$this->load->helper('dir_helper');
 		if(!$this->_doAuthBusi($session_id, $uid, $utype))
 		{
@@ -101,7 +101,7 @@ class Business extends CI_Controller {
 		$add_time = now();
 		$field_name = IProduct::UPLOAD_FIELD_NAME;
 		$year_month = date('Ym',$add_time);
-		$full_path = $_SERVER['DOCUMENT_ROOT'].$this->config->item('project_name').IProduct::UPLOAD_PATH.'/'.$year_month;
+		$full_path = rtrim($_SERVER['DOCUMENT_ROOT'], '/').'/'.$this->config->item('project_name').IProduct::UPLOAD_PATH.'/'.$year_month;
 		$this->load->helper('dir_helper');
 		if(!$this->_doAuthBusi($session_id, $uid, $utype))
 		{
